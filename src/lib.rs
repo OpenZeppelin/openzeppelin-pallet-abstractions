@@ -6,20 +6,24 @@ pub mod consensus;
 pub mod evm;
 pub mod governance;
 pub mod system;
+pub mod weights;
 pub mod xcm;
 
-use frame_support::traits::{ConstU32, Get};
+pub use weights::*;
+
+use frame_support::traits::{ConstU16, ConstU32, Get};
+use frame_system::EnsureRoot;
 use sp_version::RuntimeVersion;
 
-pub trait SystemConfig {
+pub trait SystemConfig: SystemWeight {
     type AccountId;
     type Lookup;
-    type SS58Prefix;
-    type Version: Get<RuntimeVersion>;
     type ExistentialDeposit;
-    type ScheduleOrigin;
-    type PreimageOrigin;
     type ProxyType;
+    type Version: Get<RuntimeVersion>;
+    type SS58Prefix = ConstU16<42>;
+    type ScheduleOrigin = EnsureRoot<Self::AccountId>;
+    type PreimageOrigin = EnsureRoot<Self::AccountId>;
     type MaxConsumers = ConstU32<16>;
     type MaxSignatories = ConstU32<100>;
     type MaxPendingProxies = ConstU32<32>;
@@ -29,7 +33,7 @@ pub trait SystemConfig {
     type MaxReserves = ConstU32<50>;
 }
 
-pub trait ConsensusConfig {
+pub trait ConsensusConfig: ConsensusWeight {
     type DisabledValidators = ();
     type MaxAuthorities = ConstU32<100_000>;
     type MaxCandidates = ConstU32<100>;
@@ -38,7 +42,7 @@ pub trait ConsensusConfig {
     type CollatorSelectionUpdateOrigin;
 }
 
-pub trait AssetsConfig {
+pub trait AssetsConfig: AssetsWeight {
     type ApprovalDeposit;
     type AssetAccountDeposit;
     type AssetDeposit;
@@ -53,7 +57,7 @@ pub trait AssetsConfig {
     type WeightToFee;
 }
 
-pub trait GovernanceConfig {
+pub trait GovernanceConfig: GovernanceWeight {
     type TreasuryBurn = ();
     type TreasurySpendFunds = ();
     type TreasuryBurnDestination = ();
@@ -78,7 +82,7 @@ pub trait GovernanceConfig {
     type ReferendaUndecidingTimeout;
 }
 
-pub trait XcmConfig {
+pub trait XcmConfig: XcmWeight {
     type LocationToAccountId;
     type LocalOriginToLocation;
     type AssetTransactors;
@@ -124,7 +128,7 @@ pub trait XcmConfig {
     type XcmFeesAccount;
 }
 
-pub trait EvmConfig {
+pub trait EvmConfig: EvmWeight {
     type AddressMapping;
     type FindAuthor;
     type CallOrigin;
