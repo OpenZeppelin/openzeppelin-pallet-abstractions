@@ -77,6 +77,7 @@ macro_rules! impl_openzeppelin_governance {
             // Period between successive spends.
             type SpendPeriod = <$t as GovernanceConfig>::TreasurySpendPeriod;
             type WeightInfo = <$t as GovernanceWeight>::Treasury;
+            type BlockNumberProvider = System;
         }
 
         // Pallet for managing actual voting in polls.
