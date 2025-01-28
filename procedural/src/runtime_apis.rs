@@ -103,10 +103,12 @@ fn construct_abstraction(
                 transaction_payment,
                 balance,
                 call,
+                oracle_key,
+                oracle
             } = AssetAPIFields::try_from(content.as_slice())
                 .expect("Error while parsing assets config");
 
-            apis::assets_apis(runtime, block, &transaction_payment, &balance, &call)
+            apis::assets_apis(runtime, block, &transaction_payment, &balance, &call, &oracle_key, &oracle)
         }
         APIAbstractions::Consensus => {
             state.consensus = true;
