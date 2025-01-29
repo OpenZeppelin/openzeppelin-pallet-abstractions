@@ -116,24 +116,24 @@ macro_rules! impl_openzeppelin_assets {
 
         impl frame_support::traits::tokens::ConversionToAssetBalance<Balance, <$t as AssetsConfig>::AssetId, Balance> for AssetConverter {
             type Error = sp_runtime::transaction_validity::InvalidTransaction;
-        
+
             fn to_asset_balance(balance: Balance, asset_id: <$t as AssetsConfig>::AssetId) -> Result<Balance, Self::Error> {
                 let funding_asset_price = Oracle::get(&asset_id)
                     .ok_or(sp_runtime::transaction_validity::InvalidTransaction::Payment)?;
                 // FIXME: check if timestamp on oracle data is outdated.
-        
+
                 use sp_arithmetic::FixedPointNumber;
                 let price = funding_asset_price.value.reciprocal().ok_or(sp_runtime::transaction_validity::InvalidTransaction::Payment)?;
-                
+
                 Ok(price.saturating_mul_int(balance))
             }
         }
-        
+
         type BalanceOf<T> = <<T as pallet_transaction_payment::Config>::OnChargeTransaction as pallet_transaction_payment::OnChargeTransaction<T>>::Balance;
         type AssetIdOf<T> = <<T as pallet_asset_tx_payment::Config>::Fungibles as frame_support::traits::fungibles::Inspect<parachains_common::impls::AccountIdOf<T>>>::AssetId;
         type AssetBalanceOf<T> =
                 <<T as pallet_asset_tx_payment::Config>::Fungibles as frame_support::traits::fungibles::Inspect<<T as frame_system::Config>::AccountId>>::Balance;
-        
+
         /// Implements the asset transaction for a balance to asset converter (implementing
         /// [`ConversionToAssetBalance`]) and 2 credit handlers (implementing [`HandleCredit`]).
         ///
@@ -141,7 +141,7 @@ macro_rules! impl_openzeppelin_assets {
         pub struct TxFeeFungiblesAdapter<Converter, FeeCreditor, TipCreditor>(
             sp_std::marker::PhantomData<(Converter, FeeCreditor, TipCreditor)>,
         );
-        
+
         /// Default implementation for a runtime instantiating this pallet, a balance to asset converter and
         /// a credit handler.
         impl<Runtime, Converter, FeeCreditor, TipCreditor> pallet_asset_tx_payment::OnChargeAssetTransaction<Runtime>
@@ -157,7 +157,7 @@ macro_rules! impl_openzeppelin_assets {
             type AssetId = xcm::v3::MultiLocation;
             type Balance = BalanceOf<Runtime>;
             type LiquidityInfo = frame_support::traits::fungibles::Credit<Runtime::AccountId, Runtime::Fungibles>;
-        
+
             /// Note: The `fee` already includes the `tip`.
             fn withdraw_fee(
                 who: &Runtime::AccountId,
@@ -191,7 +191,7 @@ macro_rules! impl_openzeppelin_assets {
                 )
                 .map_err(|_| sp_runtime::transaction_validity::TransactionValidityError::from(sp_runtime::transaction_validity::InvalidTransaction::Payment))
             }
-        
+
             /// Note: The `corrected_fee` already includes the `tip`.
             fn correct_and_deposit_fee(
                 who: &Runtime::AccountId,
@@ -209,21 +209,23 @@ macro_rules! impl_openzeppelin_assets {
                     .max(min_converted_fee);
                 let converted_tip = Converter::to_asset_balance(tip, paid.asset())
                     .map_err(|_| -> sp_runtime::transaction_validity::TransactionValidityError { sp_runtime::transaction_validity::InvalidTransaction::Payment.into() })?;
-        
+
                 // Calculate how much refund we should return.
                 let (final_fee, refund) = paid.split(converted_fee);
                 // Split the tip from the fee
                 let (final_tip, final_fee_minus_tip) = final_fee.split(converted_tip);
-        
-                let _ = <Runtime::Fungibles as frame_support::traits::fungibles::Balanced<Runtime::AccountId>>::resolve(who, refund);
-        
+
+                let _ = <Runtime::Fungibles as frame_support::traits::fungibles::Balanced<Runtime::AccountId>>::resolve(who, refund)
+                    // this case is unreachable
+                    .map_err(|_| sp_runtime::transaction_validity::TransactionValidityError { sp_runtime::transaction_validity::InvalidTransaction::Payment.into() })?;
+
                 FeeCreditor::handle_credit(final_fee_minus_tip);
                 TipCreditor::handle_credit(final_tip);
-        
+
                 Ok((converted_fee, converted_tip))
             }
         }
-        
+
         pub struct CreditFungiblesToAccount<AccountId, Assets, Account>(sp_std::marker::PhantomData<(AccountId, Assets, Account)>);
         impl<AccountId, Assets: frame_support::traits::fungibles::Balanced<AccountId>, Account: frame_support::pallet_prelude::Get<AccountId>>
             pallet_asset_tx_payment::HandleCredit<AccountId, Assets> for CreditFungiblesToAccount<AccountId, Assets, Account>
@@ -233,33 +235,33 @@ macro_rules! impl_openzeppelin_assets {
                 let _ = <Assets as frame_support::traits::fungibles::Balanced<AccountId>>::resolve(&payee, credit);
             }
         }
-        
+
         pub type OnCharge = TxFeeFungiblesAdapter<
             AssetConverter,
             CreditFungiblesToAccount<
-                <$t as AssetsConfig>::AccountId, 
-                crate::Assets, 
+                <$t as AssetsConfig>::AccountId,
+                Assets,
                 <$t as AssetsConfig>::FungiblesToAccount
-            >, 
+            >,
             parachains_common::impls::AssetsToBlockAuthor<
                 Runtime,
                 ()
-            >, 
+            >,
         >;
-        
+
         impl pallet_asset_tx_payment::Config for Runtime {
-            type Fungibles = crate::Assets;
+            type Fungibles = Assets;
             type OnChargeAssetTransaction = OnCharge;
             type RuntimeEvent = RuntimeEvent;
         }
-        
+
         parameter_types! {
             pub const MinimumCount: u32 = 5;
             pub const ExpiresIn: u64 = 1000 * 60 * 60; // 1 hours
-            pub const MaxFeedValues: u32 = 10; // max 10 values allowd to feed in one call.
+            pub const MaxFeedValues: u32 = 10; // max 10 values allowed to feed in one call.
             pub RootOperatorAccountId: AccountId = AccountId::from([0xffu8; 32]);
         }
-        
+
         #[cfg(feature = "runtime-benchmarks")]
         pub struct BenchmarkHelper;
         #[cfg(feature = "runtime-benchmarks")]
@@ -268,13 +270,13 @@ macro_rules! impl_openzeppelin_assets {
                 sp_runtime::BoundedVec::default()
             }
         }
-        
+
         impl orml_oracle::Config for Runtime {
             type RuntimeEvent = RuntimeEvent;
             type OnNewData = ();
             type CombineData = orml_oracle::DefaultCombineData<
-                Runtime, 
-                MinimumCount, 
+                Runtime,
+                MinimumCount,
                 ExpiresIn,
                 ()
             >;
@@ -289,11 +291,11 @@ macro_rules! impl_openzeppelin_assets {
             #[cfg(feature = "runtime-benchmarks")]
             type BenchmarkHelper = BenchmarkHelper;
         }
-        
+
         parameter_types! {
             pub const MaxMembers: u32 = 30;
         }
-        
+
         impl pallet_membership::Config for Runtime {
             type RuntimeEvent = RuntimeEvent;
             type AddOrigin = EnsureRoot<AccountId>;
@@ -306,7 +308,7 @@ macro_rules! impl_openzeppelin_assets {
             type MaxMembers = MaxMembers;
             type WeightInfo = <$t as AssetsWeight>::OracleMembership;
         }
-        
+
     };
 }
 
