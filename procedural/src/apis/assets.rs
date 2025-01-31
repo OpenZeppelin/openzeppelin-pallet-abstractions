@@ -9,6 +9,8 @@ pub struct AssetAPIFields {
     pub transaction_payment: Ident,
     pub balance: Ident,
     pub call: Ident,
+    pub oracle_key: Ident,
+    pub oracle: Ident,
 }
 
 impl TryFrom<&[Item]> for AssetAPIFields {
@@ -17,6 +19,8 @@ impl TryFrom<&[Item]> for AssetAPIFields {
         let mut transaction_payment = None;
         let mut call = None;
         let mut balance = None;
+        let mut oracle_key = None;
+        let mut oracle = None;
 
         for item in value {
             if let Item::Type(ty) = item {
@@ -26,6 +30,10 @@ impl TryFrom<&[Item]> for AssetAPIFields {
                     call = Some(fetch_ident(&ty.ty))
                 } else if ty.ident == "Balance" {
                     balance = Some(fetch_ident(&ty.ty))
+                } else if ty.ident == "OracleKey" {
+                    oracle_key = Some(fetch_ident(&ty.ty))
+                } else if ty.ident == "Oracle" {
+                    oracle = Some(fetch_ident(&ty.ty))
                 }
             }
         }
@@ -34,10 +42,14 @@ impl TryFrom<&[Item]> for AssetAPIFields {
             transaction_payment.ok_or("`type TransactionPayment` not specified, but required")?;
         let balance = balance.ok_or("`type Balance` not specified, but required")?;
         let call = call.ok_or("`type RuntimeCall` not specified, but required")?;
+        let oracle_key = oracle_key.ok_or("`type OracleKey` not specified, but required")?;
+        let oracle = oracle.ok_or("`type Oracle` not specified, but required")?;
         Ok(AssetAPIFields {
             transaction_payment,
             balance,
             call,
+            oracle_key,
+            oracle
         })
     }
 }
@@ -48,6 +60,8 @@ pub fn assets_apis(
     transaction_payment: &Ident,
     balance: &Ident,
     call: &Ident,
+    oracle_key: &Ident,
+    oracle: &Ident
 ) -> TokenStream {
     quote! {
         impl pallet_transaction_payment_rpc_runtime_api::TransactionPaymentApi<#block, #balance>
@@ -97,6 +111,21 @@ pub fn assets_apis(
             }
             fn query_length_to_fee(length: u32) -> #balance {
                 #transaction_payment::length_to_fee(length)
+            }
+        }
+
+        impl orml_oracle_runtime_api::OracleApi<
+            #block,
+            (),
+            #oracle_key,
+            orml_oracle::TimestampedValue<sp_runtime::FixedU128, u64>,
+        > for Runtime {
+            fn get_value(_: (), key: #oracle_key) -> Option<orml_oracle::TimestampedValue<sp_runtime::FixedU128, u64>> {
+                #oracle::get(&key)
+            }
+
+            fn get_all_values(_: ()) -> sp_std::prelude::Vec<(#oracle_key, Option<orml_oracle::TimestampedValue<sp_runtime::FixedU128, u64>>)> {
+                #oracle::get_all_values()
             }
         }
     }
