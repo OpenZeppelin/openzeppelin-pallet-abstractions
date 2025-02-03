@@ -243,10 +243,7 @@ macro_rules! impl_openzeppelin_assets {
                 crate::Assets,
                 <$t as AssetsConfig>::FungiblesToAccount
             >,
-            parachains_common::impls::AssetsToBlockAuthor<
-                Runtime,
-                ()
-            >,
+            <$t as AssetsConfig>::AssetsToBlockAuthor
         >;
 
         impl pallet_asset_tx_payment::Config for Runtime {
