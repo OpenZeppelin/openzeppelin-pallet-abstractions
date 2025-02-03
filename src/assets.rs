@@ -17,6 +17,7 @@
 //! may need to be updated.
 
 #[macro_export]
+#[allow(clippy::crate_in_macro_def)]
 macro_rules! impl_openzeppelin_assets {
     ($t:ty) => {
         // Constants for assets configuration
