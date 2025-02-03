@@ -60,6 +60,7 @@ pub trait AssetsConfig: AssetsWeight {
     type Timestamp;
     type AccountId;
     type FungiblesToAccount;
+    type RootOperatorAccountId;
 }
 
 pub trait GovernanceConfig: GovernanceWeight {

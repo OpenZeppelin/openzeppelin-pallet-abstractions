@@ -259,7 +259,6 @@ macro_rules! impl_openzeppelin_assets {
             pub const MinimumCount: u32 = 5;
             pub const ExpiresIn: u64 = 1000 * 60 * 60; // 1 hours
             pub const MaxFeedValues: u32 = 10; // max 10 values allowed to feed in one call.
-            pub RootOperatorAccountId: AccountId = AccountId::from([0xffu8; 32]);
         }
 
         #[cfg(feature = "runtime-benchmarks")]
@@ -283,7 +282,7 @@ macro_rules! impl_openzeppelin_assets {
             type Time = <$t as AssetsConfig>::Timestamp;
             type OracleKey = <$t as AssetsConfig>::AssetId;
             type OracleValue = sp_runtime::FixedU128;
-            type RootOperatorAccountId = RootOperatorAccountId;
+            type RootOperatorAccountId = <$t as AssetsConfig>::RootOperatorAccountId;
             type Members = OracleMembership;
             type MaxHasDispatchedSize = ConstU32<20>;
             type WeightInfo = <$t as AssetsWeight>::OrmlOracle;
