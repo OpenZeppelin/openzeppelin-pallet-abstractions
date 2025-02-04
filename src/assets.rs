@@ -260,9 +260,9 @@ macro_rules! impl_openzeppelin_assets {
         }
 
         #[cfg(feature = "runtime-benchmarks")]
-        pub struct BenchmarkHelper;
+        pub struct OracleBenchmarkHelper;
         #[cfg(feature = "runtime-benchmarks")]
-        impl orml_oracle::BenchmarkHelper<<$t as AssetsConfig>::AssetId, sp_runtime::FixedU128, MaxFeedValues> for BenchmarkHelper {
+        impl orml_oracle::BenchmarkHelper<<$t as AssetsConfig>::AssetId, sp_runtime::FixedU128, MaxFeedValues> for OracleBenchmarkHelper {
             fn get_currency_id_value_pairs() -> sp_runtime::BoundedVec<(AssetId, sp_runtime::FixedU128), MaxFeedValues> {
                 sp_runtime::BoundedVec::default()
             }
@@ -286,7 +286,7 @@ macro_rules! impl_openzeppelin_assets {
             type WeightInfo = <$t as AssetsWeight>::OrmlOracle;
             type MaxFeedValues = MaxFeedValues;
             #[cfg(feature = "runtime-benchmarks")]
-            type BenchmarkHelper = BenchmarkHelper;
+            type BenchmarkHelper = OracleBenchmarkHelper;
         }
 
         parameter_types! {
