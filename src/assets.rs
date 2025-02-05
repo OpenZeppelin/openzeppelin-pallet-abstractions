@@ -17,6 +17,7 @@
 //! may need to be updated.
 
 #[macro_export]
+#[allow(clippy::crate_in_macro_def)]
 macro_rules! impl_openzeppelin_assets {
     ($t:ty) => {
         // Constants for assets configuration
@@ -205,10 +206,10 @@ macro_rules! impl_openzeppelin_assets {
                 let min_converted_fee = if corrected_fee.is_zero() { sp_runtime::traits::Zero::zero() } else { sp_runtime::traits::One::one() };
                 // Convert the corrected fee and tip into the asset used for payment.
                 let converted_fee = Converter::to_asset_balance(corrected_fee, paid.asset())
-                    .map_err(|_| -> sp_runtime::transaction_validity::TransactionValidityError { sp_runtime::transaction_validity::InvalidTransaction::Payment.into() })?
+                    .map_err(|_| sp_runtime::transaction_validity::TransactionValidityError::from(sp_runtime::transaction_validity::InvalidTransaction::Payment))?
                     .max(min_converted_fee);
                 let converted_tip = Converter::to_asset_balance(tip, paid.asset())
-                    .map_err(|_| -> sp_runtime::transaction_validity::TransactionValidityError { sp_runtime::transaction_validity::InvalidTransaction::Payment.into() })?;
+                    .map_err(|_| sp_runtime::transaction_validity::TransactionValidityError::from(sp_runtime::transaction_validity::InvalidTransaction::Payment))?;
 
                 // Calculate how much refund we should return.
                 let (final_fee, refund) = paid.split(converted_fee);
@@ -217,7 +218,7 @@ macro_rules! impl_openzeppelin_assets {
 
                 let _ = <Runtime::Fungibles as frame_support::traits::fungibles::Balanced<Runtime::AccountId>>::resolve(who, refund)
                     // this case is unreachable
-                    .map_err(|_| sp_runtime::transaction_validity::TransactionValidityError { sp_runtime::transaction_validity::InvalidTransaction::Payment.into() })?;
+                    .map_err(|_| sp_runtime::transaction_validity::TransactionValidityError::from(sp_runtime::transaction_validity::InvalidTransaction::Payment))?;
 
                 FeeCreditor::handle_credit(final_fee_minus_tip);
                 TipCreditor::handle_credit(final_tip);
@@ -240,17 +241,14 @@ macro_rules! impl_openzeppelin_assets {
             AssetConverter,
             CreditFungiblesToAccount<
                 <$t as AssetsConfig>::AccountId,
-                Assets,
+                crate::Assets,
                 <$t as AssetsConfig>::FungiblesToAccount
             >,
-            parachains_common::impls::AssetsToBlockAuthor<
-                Runtime,
-                ()
-            >,
+            <$t as AssetsConfig>::AssetsToBlockAuthor
         >;
 
         impl pallet_asset_tx_payment::Config for Runtime {
-            type Fungibles = Assets;
+            type Fungibles = crate::Assets;
             type OnChargeAssetTransaction = OnCharge;
             type RuntimeEvent = RuntimeEvent;
         }
@@ -259,13 +257,12 @@ macro_rules! impl_openzeppelin_assets {
             pub const MinimumCount: u32 = 5;
             pub const ExpiresIn: u64 = 1000 * 60 * 60; // 1 hours
             pub const MaxFeedValues: u32 = 10; // max 10 values allowed to feed in one call.
-            pub RootOperatorAccountId: AccountId = AccountId::from([0xffu8; 32]);
         }
 
         #[cfg(feature = "runtime-benchmarks")]
-        pub struct BenchmarkHelper;
+        pub struct OracleBenchmarkHelper;
         #[cfg(feature = "runtime-benchmarks")]
-        impl orml_oracle::BenchmarkHelper<<$t as AssetsConfig>::AssetId, sp_runtime::FixedU128, MaxFeedValues> for BenchmarkHelper {
+        impl orml_oracle::BenchmarkHelper<<$t as AssetsConfig>::AssetId, sp_runtime::FixedU128, MaxFeedValues> for OracleBenchmarkHelper {
             fn get_currency_id_value_pairs() -> sp_runtime::BoundedVec<(AssetId, sp_runtime::FixedU128), MaxFeedValues> {
                 sp_runtime::BoundedVec::default()
             }
@@ -283,13 +280,13 @@ macro_rules! impl_openzeppelin_assets {
             type Time = <$t as AssetsConfig>::Timestamp;
             type OracleKey = <$t as AssetsConfig>::AssetId;
             type OracleValue = sp_runtime::FixedU128;
-            type RootOperatorAccountId = RootOperatorAccountId;
+            type RootOperatorAccountId = <$t as AssetsConfig>::RootOperatorAccountId;
             type Members = OracleMembership;
             type MaxHasDispatchedSize = ConstU32<20>;
-            type WeightInfo = <$t as AssetsWeight>::Oracle;
+            type WeightInfo = <$t as AssetsWeight>::OrmlOracle;
             type MaxFeedValues = MaxFeedValues;
             #[cfg(feature = "runtime-benchmarks")]
-            type BenchmarkHelper = BenchmarkHelper;
+            type BenchmarkHelper = OracleBenchmarkHelper;
         }
 
         parameter_types! {
