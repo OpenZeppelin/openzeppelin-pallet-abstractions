@@ -100,6 +100,7 @@ macro_rules! impl_openzeppelin_assets {
             type OperationalFeeMultiplier = OperationalFeeMultiplier;
             type RuntimeEvent = RuntimeEvent;
             type WeightToFee = <$t as AssetsConfig>::WeightToFee;
+            type WeightInfo = <$t as AssetsWeight>::TransactionPayment;
         }
 
         impl pallet_asset_manager::Config for Runtime {

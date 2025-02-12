@@ -20,6 +20,7 @@ pub trait ConsensusWeight {
 pub trait AssetsWeight {
     type Assets = ();
     type AssetManager = ();
+    type TransactionPayment = ();
     type OrmlOracle = ();
     type OracleMembership = ();
 }

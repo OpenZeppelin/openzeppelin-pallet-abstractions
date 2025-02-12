@@ -373,10 +373,10 @@ fn construct_xcm_dispatch_benchmarking(
                 let fee_location = #relay_location::get();
                 let who: #account_id = frame_benchmarking::whitelisted_caller();
 
-                let Some(location_v3) = xcm::v3::Location::try_from(fee_location.clone()).ok() else {
+                let Some(location_v4) = xcm::v4::Location::try_from(fee_location.clone()).ok() else {
                     return None;
                 };
-                let asset_type = #asset_type::Xcm(location_v3);
+                let asset_type = #asset_type::Xcm(location_v4);
 
                 let balance = 3001070000000;
                 let who = frame_benchmarking::whitelisted_caller();
@@ -414,10 +414,10 @@ fn construct_xcm_dispatch_benchmarking(
                     ].into()
                 };
 
-                let Some(location_v3) = xcm::v3::Location::try_from(self_reserve.clone()).ok() else {
+                let Some(location_v4) = xcm::v4::Location::try_from(self_reserve.clone()).ok() else {
                     return None;
                 };
-                let asset_type = #asset_type::Xcm(location_v3);
+                let asset_type = #asset_type::Xcm(location_v4);
                 #asset_manager::set_asset_type_asset_id(asset_type.clone(), local_asset_id);
 
                 let asset = Asset {
@@ -451,13 +451,13 @@ fn construct_xcm_dispatch_benchmarking(
                     ].into()
                 };
 
-                let Some(location_v3) = xcm::v3::Location::try_from(self_reserve.clone()).ok() else {
+                let Some(location_v4) = xcm::v4::Location::try_from(self_reserve.clone()).ok() else {
                     return None;
                 };
-                let asset_type = #asset_type::Xcm(location_v3);
+                let asset_type = #asset_type::Xcm(location_v4);
                 #asset_manager::set_asset_type_asset_id(asset_type.clone(), local_asset_id);
 
-                let destination: xcm::v4::Location = Parent.into();
+                let destination: xcm::v5::Location = Parent.into();
 
                 // set up fee asset
                 let fee_amount: u128 = <#existential_deposit as sp_core::Get<u128>>::get();
@@ -487,10 +487,10 @@ fn construct_xcm_dispatch_benchmarking(
                     id: asset_id.clone(),
                     fun: Fungible(<#existential_deposit as sp_core::Get<u128>>::get()),
                 };
-                let Some(location_v3) = xcm::v3::Location::try_from(location).ok() else {
+                let Some(location_v4) = xcm::v4::Location::try_from(location).ok() else {
                     return asset;
                 };
-                let asset_type = #asset_type::Xcm(location_v3);
+                let asset_type = #asset_type::Xcm(location_v4);
                 let local_asset_id: #asset_id = asset_type.clone().into();
                 let manager_id = #asset_manager::account_id();
                 let _ = #assets::force_create(#runtime_origin::root(), local_asset_id.clone().into(), #address::from(manager_id), true, 1);
