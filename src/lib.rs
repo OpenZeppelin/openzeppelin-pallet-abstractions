@@ -56,6 +56,12 @@ pub trait AssetsConfig: AssetsWeight {
     type AssetRegistrar;
     type AssetRegistrarMetadata;
     type WeightToFee;
+
+    type Timestamp;
+    type AccountId;
+    type FungiblesToAccount;
+    type RootOperatorAccountId;
+    type AssetsToBlockAuthor;
 }
 
 pub trait GovernanceConfig: GovernanceWeight {
