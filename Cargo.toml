@@ -9,14 +9,14 @@ readme = "README.md"
 version = "0.1.0"
 
 [dependencies]
-frame-support = { git = "https://github.com/paritytech/polkadot-sdk", default-features = false, tag = "polkadot-stable2412" }
-frame-system = { git = "https://github.com/paritytech/polkadot-sdk", default-features = false, tag = "polkadot-stable2412" }
+frame-support = { git = "https://github.com/paritytech/polkadot-sdk", default-features = false, rev = "54a4ec0a11558fb82ea17575c9bbff5fb785e394" }
+frame-system = { git = "https://github.com/paritytech/polkadot-sdk", default-features = false, rev = "54a4ec0a11558fb82ea17575c9bbff5fb785e394" }
 scale-info = { version = "2.11.1", default-features = false }
-sp-std = { git = "https://github.com/paritytech/polkadot-sdk", default-features = false, tag = "polkadot-stable2412" }
-sp-version = { git = "https://github.com/paritytech/polkadot-sdk", default-features = false, tag = "polkadot-stable2412" }
+sp-std = { git = "https://github.com/paritytech/polkadot-sdk", default-features = false, rev = "54a4ec0a11558fb82ea17575c9bbff5fb785e394" }
+sp-version = { git = "https://github.com/paritytech/polkadot-sdk", default-features = false, rev = "54a4ec0a11558fb82ea17575c9bbff5fb785e394" }
 
 # Cumulus
-cumulus-primitives-core = { git = "https://github.com/paritytech/polkadot-sdk", default-features = false, tag = "polkadot-stable2412" }
+cumulus-primitives-core = { git = "https://github.com/paritytech/polkadot-sdk", default-features = false, rev = "54a4ec0a11558fb82ea17575c9bbff5fb785e394" }
 
 [features]
 default = [ "std" ]
