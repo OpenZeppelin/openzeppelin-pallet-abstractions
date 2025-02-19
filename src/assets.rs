@@ -194,6 +194,34 @@ macro_rules! impl_openzeppelin_assets {
                 .map_err(|_| sp_runtime::transaction_validity::TransactionValidityError::from(sp_runtime::transaction_validity::InvalidTransaction::Payment))
             }
 
+            /// Check if the predicted fee from the transaction origin can be withdrawn.
+            ///
+            /// Note: The `fee` already includes the `tip`.
+            fn can_withdraw_fee(
+                who: &Runtime::AccountId,
+                _call: &Runtime::RuntimeCall,
+                _info: &sp_runtime::traits::DispatchInfoOf<Runtime::RuntimeCall>,
+                asset_id: Self::AssetId,
+                fee: Self::Balance,
+                _tip: Self::Balance,
+            ) -> Result<(), sp_runtime::transaction_validity::TransactionValidityError> {
+                use sp_runtime::traits::Zero;
+                // We don't know the precision of the underlying asset. Because the converted fee could be
+                // less than one (e.g. 0.5) but gets rounded down by integer division we introduce a minimum
+                // fee.
+                let asset_id: AssetId = AssetType::Xcm(asset_id).into();
+                let min_converted_fee = if fee.is_zero() { sp_runtime::traits::Zero::zero() } else { sp_runtime::traits::One::one() };
+                let converted_fee = Converter::to_asset_balance(fee, asset_id.clone())
+                    .map_err(|_| sp_runtime::transaction_validity::TransactionValidityError::from(sp_runtime::transaction_validity::InvalidTransaction::Payment))?
+                    .max(min_converted_fee);
+                let can_withdraw =
+                <Runtime::Fungibles as frame_support::traits::fungibles::Inspect<Runtime::AccountId>>::can_withdraw(asset_id, who, converted_fee);
+                if can_withdraw != frame_support::traits::tokens::WithdrawConsequence::Success {
+                    return Err(sp_runtime::transaction_validity::InvalidTransaction::Payment.into())
+                }
+                Ok(())
+            }
+
             /// Note: The `corrected_fee` already includes the `tip`.
             fn correct_and_deposit_fee(
                 who: &Runtime::AccountId,
@@ -252,6 +280,7 @@ macro_rules! impl_openzeppelin_assets {
             type Fungibles = crate::Assets;
             type OnChargeAssetTransaction = OnCharge;
             type RuntimeEvent = RuntimeEvent;
+            type WeightInfo = <$t as AssetsWeight>::AssetTxPayment;
         }
 
         parameter_types! {

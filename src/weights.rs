@@ -23,6 +23,7 @@ pub trait AssetsWeight {
     type TransactionPayment = ();
     type OrmlOracle = ();
     type OracleMembership = ();
+    type AssetTxPayment = ();
 }
 
 pub trait GovernanceWeight {
