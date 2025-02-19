@@ -144,6 +144,21 @@ macro_rules! impl_openzeppelin_assets {
             sp_std::marker::PhantomData<(Converter, FeeCreditor, TipCreditor)>,
         );
 
+        #[doc(hidden)]
+        extern crate alloc;
+
+        use alloc::sync::Arc;
+        use sp_std::convert::TryFrom;
+        use xcm::v3::{MultiLocation as MultiLocationV3, Junctions as JunctionsV3};
+        use xcm::v4::{Location as LocationV4, Junctions as JunctionsV4};
+
+        fn convert_v3_to_v4(v3: MultiLocationV3) -> Option<LocationV4> {
+            Some(LocationV4 {
+                parents: v3.parents,
+                interior: JunctionsV4::try_from(v3.interior).ok()?, // Returns None if conversion fails
+            })
+        }
+
         /// Default implementation for a runtime instantiating this pallet, a balance to asset converter and
         /// a credit handler.
         impl<Runtime, Converter, FeeCreditor, TipCreditor> pallet_asset_tx_payment::OnChargeAssetTransaction<Runtime>
@@ -173,7 +188,8 @@ macro_rules! impl_openzeppelin_assets {
                 // We don't know the precision of the underlying asset. Because the converted fee could be
                 // less than one (e.g. 0.5) but gets rounded down by integer division we introduce a minimum
                 // fee.
-                let asset_id: AssetId = AssetType::Xcm(asset_id).into();
+                let xcm_asset_id = convert_v3_to_v4(asset_id).ok_or(sp_runtime::transaction_validity::TransactionValidityError::from(sp_runtime::transaction_validity::InvalidTransaction::Payment))?;
+                let asset_id: AssetId = AssetType::Xcm(xcm_asset_id).into();
                 let min_converted_fee = if fee.is_zero() { sp_runtime::traits::Zero::zero() } else { sp_runtime::traits::One::one() };
                 let converted_fee = Converter::to_asset_balance(fee, asset_id.clone())
                     .map_err(|_| sp_runtime::transaction_validity::TransactionValidityError::from(sp_runtime::transaction_validity::InvalidTransaction::Payment))?
@@ -209,7 +225,8 @@ macro_rules! impl_openzeppelin_assets {
                 // We don't know the precision of the underlying asset. Because the converted fee could be
                 // less than one (e.g. 0.5) but gets rounded down by integer division we introduce a minimum
                 // fee.
-                let asset_id: AssetId = AssetType::Xcm(asset_id).into();
+                let xcm_asset_id = convert_v3_to_v4(asset_id).ok_or(sp_runtime::transaction_validity::TransactionValidityError::from(sp_runtime::transaction_validity::InvalidTransaction::Payment))?;
+                let asset_id: AssetId = AssetType::Xcm(xcm_asset_id).into();
                 let min_converted_fee = if fee.is_zero() { sp_runtime::traits::Zero::zero() } else { sp_runtime::traits::One::one() };
                 let converted_fee = Converter::to_asset_balance(fee, asset_id.clone())
                     .map_err(|_| sp_runtime::transaction_validity::TransactionValidityError::from(sp_runtime::transaction_validity::InvalidTransaction::Payment))?
