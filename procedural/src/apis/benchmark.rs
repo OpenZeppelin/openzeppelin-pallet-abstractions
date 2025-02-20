@@ -457,7 +457,7 @@ fn construct_xcm_dispatch_benchmarking(
                 let asset_type = #asset_type::Xcm(location_v4);
                 #asset_manager::set_asset_type_asset_id(asset_type.clone(), local_asset_id);
 
-                let destination: xcm::v4::Location = Parent.into();
+                let destination: Location = Parent.into();
 
                 // set up fee asset
                 let fee_amount: u128 = <#existential_deposit as sp_core::Get<u128>>::get();

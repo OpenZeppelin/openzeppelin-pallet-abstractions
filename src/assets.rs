@@ -293,11 +293,30 @@ macro_rules! impl_openzeppelin_assets {
             <$t as AssetsConfig>::AssetsToBlockAuthor
         >;
 
+        #[cfg(feature = "runtime-benchmarks")]
+        pub struct AssetTxPaymentBenchmarkHelper;
+
+        #[cfg(feature = "runtime-benchmarks")]
+        // TODO: implement the functions next time we run the benchmarks
+        impl pallet_asset_tx_payment::BenchmarkHelperTrait<AccountId, <$t as AssetsConfig>::AssetId, xcm::v3::MultiLocation> for AssetTxPaymentBenchmarkHelper {
+            /// Returns the `AssetId` to be used in the liquidity pool by the benchmarking code.
+            fn create_asset_id_parameter(id: u32) -> ( <$t as AssetsConfig>::AssetId, xcm::v3::MultiLocation) {
+                unimplemented!();
+            }
+            /// Create a liquidity pool for a given asset and sufficiently endow accounts to benchmark
+            /// the extension.
+            fn setup_balances_and_pool(asset_id: <$t as AssetsConfig>::AssetId, account: AccountId) {
+                unimplemented!();
+            }
+        }
+
         impl pallet_asset_tx_payment::Config for Runtime {
             type Fungibles = crate::Assets;
             type OnChargeAssetTransaction = OnCharge;
             type RuntimeEvent = RuntimeEvent;
             type WeightInfo = <$t as AssetsWeight>::AssetTxPayment;
+            #[cfg(feature = "runtime-benchmarks")]
+            type BenchmarkHelper = AssetTxPaymentBenchmarkHelper;
         }
 
         parameter_types! {
