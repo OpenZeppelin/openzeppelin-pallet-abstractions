@@ -246,6 +246,7 @@ macro_rules! impl_openzeppelin_system {
             // The overarching hold reason.
             type RuntimeHoldReason = RuntimeHoldReason;
             type WeightInfo = <$t as SystemWeight>::Balances;
+	        type DoneSlashHandler = ();
         }
 
         // A stateless pallet with helpers for dispatch management which does no re-authentication.
@@ -291,6 +292,7 @@ macro_rules! impl_openzeppelin_system {
             type WeightInfo = <$t as SystemWeight>::ParachainSystem;
             // The message handler that will be invoked when messages are received via XCMP.
             type XcmpMessageHandler = XcmpQueue;
+            type SelectCore = cumulus_pallet_parachain_system::DefaultCoreSelector<Runtime>;
         }
 
 
