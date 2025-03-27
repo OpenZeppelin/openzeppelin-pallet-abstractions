@@ -10,7 +10,7 @@
 //! - `pallet_xcm_transactor`
 //!
 //! # Parameters
-//! - `$t`: A type that implements the `XcmConfig` trait, providing the necessary associated types
+//! - `$t`: A type that implements the `XcmConfigFull` trait, providing the necessary associated types
 //!   and configurations for cross-chain messaging functionality.
 //!
 //! # Important
@@ -21,9 +21,9 @@
 macro_rules! impl_openzeppelin_xcm {
     ($t:ty) => {
         impl pallet_message_queue::Config for Runtime {
-            type HeapSize = <$t as XcmConfig>::MessageQueueHeapSize;
-            type IdleMaxServiceWeight = <$t as XcmConfig>::MessageQueueServiceWeight;
-            type MaxStale = <$t as XcmConfig>::MessageQueueMaxStale;
+            type HeapSize = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::MessageQueueHeapSize;
+            type IdleMaxServiceWeight = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::MessageQueueServiceWeight;
+            type MaxStale = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::MessageQueueMaxStale;
             #[cfg(feature = "runtime-benchmarks")]
             type MessageProcessor = pallet_message_queue::mock_helpers::NoopMessageProcessor<
                 cumulus_primitives_core::AggregateMessageOrigin,
@@ -38,7 +38,7 @@ macro_rules! impl_openzeppelin_xcm {
             type QueueChangeHandler = NarrowOriginToSibling<XcmpQueue>;
             type QueuePausedQuery = NarrowOriginToSibling<XcmpQueue>;
             type RuntimeEvent = RuntimeEvent;
-            type ServiceWeight = <$t as XcmConfig>::MessageQueueServiceWeight;
+            type ServiceWeight = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::MessageQueueServiceWeight;
             type Size = u32;
             type WeightInfo = <$t as XcmWeight>::MessageQueue;
         }
@@ -52,11 +52,11 @@ macro_rules! impl_openzeppelin_xcm {
 
         impl cumulus_pallet_xcmp_queue::Config for Runtime {
             type ChannelInfo = ParachainSystem;
-            type ControllerOrigin = <$t as XcmConfig>::XcmpQueueControllerOrigin;
+            type ControllerOrigin = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::XcmpQueueControllerOrigin;
             type ControllerOriginConverter = XcmOriginToTransactDispatchOrigin;
-            type MaxActiveOutboundChannels = <$t as XcmConfig>::MaxActiveOutboundChannels;
-            type MaxInboundSuspended = <$t as XcmConfig>::XcmpQueueMaxInboundSuspended;
-            type MaxPageSize = <$t as XcmConfig>::MaxPageSize;
+            type MaxActiveOutboundChannels = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::MaxActiveOutboundChannels;
+            type MaxInboundSuspended = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::XcmpQueueMaxInboundSuspended;
+            type MaxPageSize = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::MaxPageSize;
             /// Ensure that this value is not set to null (or NoPriceForMessageDelivery) to prevent spamming
             type PriceForSiblingDelivery = PriceForSiblingParachainDelivery;
             type RuntimeEvent = RuntimeEvent;
@@ -111,27 +111,27 @@ macro_rules! impl_openzeppelin_xcm {
             type AssetExchanger = ();
             type AssetLocker = ();
             // How to withdraw and deposit an asset.
-            type AssetTransactor = <$t as XcmConfig>::AssetTransactors;
+            type AssetTransactor = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::AssetTransactors;
             type AssetTrap = PolkadotXcm;
             type Barrier = Barrier;
             type CallDispatcher = RuntimeCall;
             /// When changing this config, keep in mind, that you should collect fees.
-            type FeeManager = <$t as XcmConfig>::FeeManager;
+            type FeeManager = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::FeeManager;
             type HrmpChannelAcceptedHandler = ();
             type HrmpChannelClosingHandler = ();
             type HrmpNewChannelOpenRequestHandler = ();
             /// Please, keep these two configs (`IsReserve` and `IsTeleporter`) mutually exclusive
-            type IsReserve = <$t as XcmConfig>::Reserves;
+            type IsReserve = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::Reserves;
             type IsTeleporter = ();
             type MaxAssetsIntoHolding = MaxAssetsIntoHolding;
             type MessageExporter = ();
-            type OriginConverter = <$t as XcmConfig>::XcmOriginToTransactDispatchOrigin;
+            type OriginConverter = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::XcmOriginToTransactDispatchOrigin;
             type PalletInstancesInfo = AllPalletsWithSystem;
             type ResponseHandler = PolkadotXcm;
             type RuntimeCall = RuntimeCall;
             type SafeCallFilter = Everything;
             type SubscriptionService = PolkadotXcm;
-            type Trader = <$t as XcmConfig>::Trader;
+            type Trader = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::Trader;
             type TransactionalProcessor = FrameTransactionalProcessor;
             type UniversalAliases = Nothing;
             // Teleporting is disabled.
@@ -156,20 +156,20 @@ macro_rules! impl_openzeppelin_xcm {
         }
 
         impl pallet_xcm::Config for Runtime {
-            type AdminOrigin = <$t as XcmConfig>::XcmAdminOrigin;
+            type AdminOrigin = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::XcmAdminOrigin;
             // ^ Override for AdvertisedXcmVersion default
             type AdvertisedXcmVersion = pallet_xcm::CurrentXcmVersion;
             type Currency = Balances;
             type CurrencyMatcher = ();
-            type ExecuteXcmOrigin = EnsureXcmOrigin<RuntimeOrigin, <$t as XcmConfig>::LocalOriginToLocation>;
+            type ExecuteXcmOrigin = EnsureXcmOrigin<RuntimeOrigin, <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::LocalOriginToLocation>;
             type MaxLockers = MaxLockers;
             type MaxRemoteLockConsumers = MaxRemoteLockConsumers;
             type RemoteLockConsumerIdentifier = ();
             type RuntimeCall = RuntimeCall;
             type RuntimeEvent = RuntimeEvent;
             type RuntimeOrigin = RuntimeOrigin;
-            type SendXcmOrigin = EnsureXcmOrigin<RuntimeOrigin, <$t as XcmConfig>::LocalOriginToLocation>;
-            type SovereignAccountOf = <$t as XcmConfig>::LocationToAccountId;
+            type SendXcmOrigin = EnsureXcmOrigin<RuntimeOrigin, <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::LocalOriginToLocation>;
+            type SovereignAccountOf = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::LocationToAccountId;
             type TrustedLockers = ();
             type UniversalLocation = UniversalLocation;
             type Weigher = FixedWeightBounds<UnitWeightCost, RuntimeCall, MaxInstructions>;
@@ -194,63 +194,63 @@ macro_rules! impl_openzeppelin_xcm {
         }
 
         impl pallet_xcm_weight_trader::Config for Runtime {
-            type AccountIdToLocation = <$t as XcmConfig>::AccountIdToLocation;
-            type AddSupportedAssetOrigin = <$t as XcmConfig>::AddSupportedAssetOrigin;
-            type AssetLocationFilter = <$t as XcmConfig>::AssetFeesFilter;
-            type AssetTransactor = <$t as XcmConfig>::AssetTransactors;
+            type AccountIdToLocation = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::AccountIdToLocation;
+            type AddSupportedAssetOrigin = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::AddSupportedAssetOrigin;
+            type AssetLocationFilter = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::AssetFeesFilter;
+            type AssetTransactor = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::AssetTransactors;
             type Balance = Balance;
-            type EditSupportedAssetOrigin = <$t as XcmConfig>::EditSupportedAssetOrigin;
-            type NativeLocation = <$t as XcmConfig>::SelfReserve;
+            type EditSupportedAssetOrigin = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::EditSupportedAssetOrigin;
+            type NativeLocation = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::SelfReserve;
             #[cfg(feature = "runtime-benchmarks")]
-            type NotFilteredLocation = <$t as XcmConfig>::RelayLocation;
-            type PauseSupportedAssetOrigin = <$t as XcmConfig>::PauseSupportedAssetOrigin;
-            type RemoveSupportedAssetOrigin = <$t as XcmConfig>::RemoveSupportedAssetOrigin;
-            type ResumeSupportedAssetOrigin = <$t as XcmConfig>::ResumeSupportedAssetOrigin;
+            type NotFilteredLocation = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::RelayLocation;
+            type PauseSupportedAssetOrigin = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::PauseSupportedAssetOrigin;
+            type RemoveSupportedAssetOrigin = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::RemoveSupportedAssetOrigin;
+            type ResumeSupportedAssetOrigin = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::ResumeSupportedAssetOrigin;
             type RuntimeEvent = RuntimeEvent;
             type WeightInfo = <$t as XcmWeight>::XcmWeightTrader;
-            type WeightToFee = <$t as XcmConfig>::WeightToFee;
-            type XcmFeesAccount = <$t as XcmConfig>::XcmFeesAccount;
+            type WeightToFee = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::WeightToFee;
+            type XcmFeesAccount = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::XcmFeesAccount;
         }
 
         impl orml_xtokens::Config for Runtime {
-            type AccountIdToLocation = <$t as XcmConfig>::AccountIdToLocation;
+            type AccountIdToLocation = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::AccountIdToLocation;
             type Balance = Balance;
-            type BaseXcmWeight = <$t as XcmConfig>::BaseXcmWeight;
-            type CurrencyId = <$t as XcmConfig>::CurrencyId;
-            type CurrencyIdConvert = <$t as XcmConfig>::CurrencyIdToLocation;
+            type BaseXcmWeight = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::BaseXcmWeight;
+            type CurrencyId = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::CurrencyId;
+            type CurrencyIdConvert = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::CurrencyIdToLocation;
             type LocationsFilter = Everything;
-            type MaxAssetsForTransfer = <$t as XcmConfig>::MaxAssetsForTransfer;
-            type MinXcmFee = <$t as XcmConfig>::ParachainMinFee;
+            type MaxAssetsForTransfer = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::MaxAssetsForTransfer;
+            type MinXcmFee = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::ParachainMinFee;
             type RateLimiter = ();
             type RateLimiterId = ();
-            type ReserveProvider = <$t as XcmConfig>::XtokensReserveProviders;
+            type ReserveProvider = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::XtokensReserveProviders;
             type RuntimeEvent = RuntimeEvent;
-            type SelfLocation = <$t as XcmConfig>::SelfLocation;
-            type UniversalLocation = <$t as XcmConfig>::UniversalLocation;
-            type Weigher = <$t as XcmConfig>::XcmWeigher;
+            type SelfLocation = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::SelfLocation;
+            type UniversalLocation = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::UniversalLocation;
+            type Weigher = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::XcmWeigher;
             type XcmExecutor = XcmExecutor<XcmExecutorConfig>;
         }
 
         impl pallet_xcm_transactor::Config for Runtime {
-            type AccountIdToLocation = <$t as XcmConfig>::AccountIdToLocation;
-            type AssetTransactor = <$t as XcmConfig>::AssetTransactors;
+            type AccountIdToLocation = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::AccountIdToLocation;
+            type AssetTransactor = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::AssetTransactors;
             type Balance = Balance;
-            type BaseXcmWeight = <$t as XcmConfig>::BaseXcmWeight;
-            type CurrencyId = <$t as XcmConfig>::CurrencyId;
-            type CurrencyIdToLocation = <$t as XcmConfig>::CurrencyIdToLocation;
-            type DerivativeAddressRegistrationOrigin = <$t as XcmConfig>::DerivativeAddressRegistrationOrigin;
-            type HrmpManipulatorOrigin = <$t as XcmConfig>::HrmpManipulatorOrigin;
-            type HrmpOpenOrigin = <$t as XcmConfig>::HrmpOpenOrigin;
-            type MaxHrmpFee = xcm_builder::Case<<$t as XcmConfig>::MaxHrmpRelayFee>;
-            type ReserveProvider = <$t as XcmConfig>::TransactorReserveProvider;
+            type BaseXcmWeight = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::BaseXcmWeight;
+            type CurrencyId = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::CurrencyId;
+            type CurrencyIdToLocation = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::CurrencyIdToLocation;
+            type DerivativeAddressRegistrationOrigin = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::DerivativeAddressRegistrationOrigin;
+            type HrmpManipulatorOrigin = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::HrmpManipulatorOrigin;
+            type HrmpOpenOrigin = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::HrmpOpenOrigin;
+            type MaxHrmpFee = xcm_builder::Case<<$t as openzeppelin_pallet_abstractions::XcmConfigFull>::MaxHrmpRelayFee>;
+            type ReserveProvider = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::TransactorReserveProvider;
             type RuntimeEvent = RuntimeEvent;
-            type SelfLocation = <$t as XcmConfig>::SelfLocation;
-            type SovereignAccountDispatcherOrigin = <$t as XcmConfig>::SovereignAccountDispatcherOrigin;
-            type Transactor = <$t as XcmConfig>::Transactors;
-            type UniversalLocation = <$t as XcmConfig>::UniversalLocation;
-            type Weigher = <$t as XcmConfig>::XcmWeigher;
+            type SelfLocation = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::SelfLocation;
+            type SovereignAccountDispatcherOrigin = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::SovereignAccountDispatcherOrigin;
+            type Transactor = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::Transactors;
+            type UniversalLocation = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::UniversalLocation;
+            type Weigher = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::XcmWeigher;
             type WeightInfo = <$t as XcmWeight>::XcmTransactor;
-            type XcmSender = <$t as XcmConfig>::XcmSender;
+            type XcmSender = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::XcmSender;
         }
     };
 }

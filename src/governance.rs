@@ -9,7 +9,7 @@
 //! - `pallet_referenda`
 //!
 //! # Parameters
-//! - `$t`: A type that implements the `GovernanceConfig` trait, providing the necessary associated types
+//! - `$t`: A type that implements the `GovernanceConfigFull` trait, providing the necessary associated types
 //!   and configurations.
 //!
 //! # Important
@@ -41,21 +41,21 @@ macro_rules! impl_openzeppelin_governance {
             >;
             type Beneficiary = Beneficiary;
             type BeneficiaryLookup = IdentityLookup<Self::Beneficiary>;
-            type Burn = <$t as GovernanceConfig>::TreasuryBurn;
-            type BurnDestination = <$t as GovernanceConfig>::TreasuryBurnDestination;
+            type Burn = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::TreasuryBurn;
+            type BurnDestination = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::TreasuryBurnDestination;
             type Currency = Balances;
-            type MaxApprovals = <$t as GovernanceConfig>::TreasuryMaxApprovals;
-            type PalletId = <$t as GovernanceConfig>::TreasuryPalletId;
+            type MaxApprovals = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::TreasuryMaxApprovals;
+            type PalletId = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::TreasuryPalletId;
             #[cfg(feature = "runtime-benchmarks")]
             type Paymaster = PayWithEnsure<TreasuryPaymaster, OpenHrmpChannel<BenchmarkParaId>>;
             #[cfg(not(feature = "runtime-benchmarks"))]
             type Paymaster = TreasuryPaymaster;
-            type PayoutPeriod = <$t as GovernanceConfig>::TreasuryPayoutSpendPeriod;
-            type RejectOrigin = <$t as GovernanceConfig>::TreasuryRejectOrigin;
+            type PayoutPeriod = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::TreasuryPayoutSpendPeriod;
+            type RejectOrigin = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::TreasuryRejectOrigin;
             type RuntimeEvent = RuntimeEvent;
-            type SpendFunds = <$t as GovernanceConfig>::TreasurySpendFunds;
-            type SpendOrigin = <$t as GovernanceConfig>::TreasurySpendOrigin;
-            type SpendPeriod = <$t as GovernanceConfig>::TreasurySpendPeriod;
+            type SpendFunds = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::TreasurySpendFunds;
+            type SpendOrigin = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::TreasurySpendOrigin;
+            type SpendPeriod = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::TreasurySpendPeriod;
             type WeightInfo = <$t as GovernanceWeight>::Treasury;
         }
 
@@ -65,20 +65,20 @@ macro_rules! impl_openzeppelin_governance {
                 Balances,
                 Self::AccountId,
             >;
-            type MaxVotes = <$t as GovernanceConfig>::ConvictionMaxVotes;
+            type MaxVotes = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::ConvictionMaxVotes;
             type Polls = Referenda;
             type RuntimeEvent = RuntimeEvent;
-            type VoteLockingPeriod = <$t as GovernanceConfig>::ConvictionVoteLockingPeriod;
-            type WeightInfo = <$t as GovernanceWeight>::ConvictionVoting;
+            type VoteLockingPeriod = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::ConvictionVoteLockingPeriod;
+            type WeightInfo =<$t as GovernanceWeight>::ConvictionVoting;
         }
 
         impl pallet_whitelist::Config for Runtime {
-            type DispatchWhitelistedOrigin = <$t as GovernanceConfig>::DispatchWhitelistedOrigin;
+            type DispatchWhitelistedOrigin = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::DispatchWhitelistedOrigin;
             type Preimages = Preimage;
             type RuntimeCall = RuntimeCall;
             type RuntimeEvent = RuntimeEvent;
             type WeightInfo = <$t as GovernanceWeight>::Whitelist;
-            type WhitelistOrigin = <$t as GovernanceConfig>::WhitelistOrigin;
+            type WhitelistOrigin = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::WhitelistOrigin;
         }
 
         impl pallet_custom_origins::Config for Runtime {}
@@ -89,21 +89,21 @@ macro_rules! impl_openzeppelin_governance {
         pub type TreasurySpender = EitherOf<EnsureRootWithSuccess<AccountId, MaxBalance>, Spender>;
 
         impl pallet_referenda::Config for Runtime {
-            type AlarmInterval = <$t as GovernanceConfig>::ReferendaAlarmInterval;
-            type CancelOrigin = <$t as GovernanceConfig>::ReferendaCancelOrigin;
+            type AlarmInterval = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::ReferendaAlarmInterval;
+            type CancelOrigin = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::ReferendaCancelOrigin;
             type Currency = Balances;
-            type KillOrigin = <$t as GovernanceConfig>::ReferendaKillOrigin;
-            type MaxQueued = <$t as GovernanceConfig>::ReferendaMaxQueued;
+            type KillOrigin = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::ReferendaKillOrigin;
+            type MaxQueued = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::ReferendaMaxQueued;
             type Preimages = Preimage;
             type RuntimeCall = RuntimeCall;
             type RuntimeEvent = RuntimeEvent;
             type Scheduler = Scheduler;
-            type Slash = <$t as GovernanceConfig>::ReferendaSlash;
-            type SubmissionDeposit = <$t as GovernanceConfig>::ReferendaSubmissionDeposit;
-            type SubmitOrigin = <$t as GovernanceConfig>::ReferendaSubmitOrigin;
+            type Slash = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::ReferendaSlash;
+            type SubmissionDeposit = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::ReferendaSubmissionDeposit;
+            type SubmitOrigin = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::ReferendaSubmitOrigin;
             type Tally = pallet_conviction_voting::TallyOf<Runtime>;
             type Tracks = tracks::TracksInfo;
-            type UndecidingTimeout = <$t as GovernanceConfig>::ReferendaUndecidingTimeout;
+            type UndecidingTimeout = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::ReferendaUndecidingTimeout;
             type Votes = pallet_conviction_voting::VotesOf<Runtime>;
             type WeightInfo = <$t as GovernanceWeight>::Referenda;
         }
