@@ -6,7 +6,7 @@
 //! - `pallet_session`
 //!
 //! # Parameters
-//! - `$t`: A type that implements the `ConsensusConfig` trait, providing the necessary associated types
+//! - `$t`: A type that implements the `ConsensusConfigFull` trait, providing the necessary associated types
 //!   and configurations.
 //!
 //! # Important
@@ -34,8 +34,8 @@ macro_rules! impl_openzeppelin_consensus {
         impl pallet_aura::Config for Runtime {
             type AllowMultipleBlocksPerSlot = AllowMultipleBlocksPerSlot;
             type AuthorityId = AuraId;
-            type DisabledValidators = <$t as ConsensusConfig>::DisabledValidators;
-            type MaxAuthorities = <$t as ConsensusConfig>::MaxAuthorities;
+            type DisabledValidators = <$t as openzeppelin_pallet_abstractions::ConsensusConfigFull>::DisabledValidators;
+            type MaxAuthorities = <$t as openzeppelin_pallet_abstractions::ConsensusConfigFull>::MaxAuthorities;
             type SlotDuration = pallet_aura::MinimumPeriodTimesTwo<Self>;
         }
 
@@ -52,12 +52,12 @@ macro_rules! impl_openzeppelin_consensus {
             type Currency = Balances;
             // should be a multiple of session or things will get inconsistent
             type KickThreshold = Period;
-            type MaxCandidates = <$t as ConsensusConfig>::MaxCandidates;
-            type MaxInvulnerables = <$t as ConsensusConfig>::MaxInvulnerables;
-            type MinEligibleCollators = <$t as ConsensusConfig>::MinEligibleCollators;
+            type MaxCandidates = <$t as openzeppelin_pallet_abstractions::ConsensusConfigFull>::MaxCandidates;
+            type MaxInvulnerables = <$t as openzeppelin_pallet_abstractions::ConsensusConfigFull>::MaxInvulnerables;
+            type MinEligibleCollators = <$t as openzeppelin_pallet_abstractions::ConsensusConfigFull>::MinEligibleCollators;
             type PotId = PotId;
             type RuntimeEvent = RuntimeEvent;
-            type UpdateOrigin = <$t as ConsensusConfig>::CollatorSelectionUpdateOrigin;
+            type UpdateOrigin = <$t as openzeppelin_pallet_abstractions::ConsensusConfigFull>::CollatorSelectionUpdateOrigin;
             type ValidatorId = <Self as frame_system::Config>::AccountId;
             type ValidatorIdOf = pallet_collator_selection::IdentityCollator;
             type ValidatorRegistration = Session;

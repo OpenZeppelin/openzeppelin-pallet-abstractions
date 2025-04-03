@@ -13,7 +13,7 @@
 //! - `pallet_multisig`
 //!
 //! # Parameters
-//! - `$t`: A type that implements the `SystemConfig` trait, providing the necessary associated types
+//! - `$t`: A type that implements the `SystemConfigFull` trait, providing the necessary associated types
 //!   and configurations for core system functionality.
 //!
 //! # Important
@@ -75,7 +75,7 @@ macro_rules! impl_openzeppelin_system {
             /// The data to be stored in an account.
             type AccountData = pallet_balances::AccountData<Balance>;
             /// The identifier used to distinguish between accounts.
-            type AccountId = <$t as SystemConfig>::AccountId;
+            type AccountId = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::AccountId;
             /// The basic call filter to use in dispatchable.
             type BaseCallFilter = NormalFilter;
             /// The block type.
@@ -92,9 +92,9 @@ macro_rules! impl_openzeppelin_system {
             type Hash = Hash;
             /// The lookup mechanism to get account ID from whatever is passed in
             /// dispatchers.
-            type Lookup = <$t as SystemConfig>::Lookup;
+            type Lookup = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::Lookup;
             /// The maximum number of consumers allowed on a single account.
-            type MaxConsumers = <$t as SystemConfig>::MaxConsumers;
+            type MaxConsumers = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::MaxConsumers;
             /// The index type for storing how many extrinsics an account has signed.
             type Nonce = Nonce;
             /// The action to take on a Runtime Upgrade
@@ -108,16 +108,16 @@ macro_rules! impl_openzeppelin_system {
             /// The ubiquitous origin type.
             type RuntimeOrigin = RuntimeOrigin;
             /// This is used as an identifier of the chain. 42 is the generic substrate prefix.
-            type SS58Prefix = <$t as SystemConfig>::SS58Prefix;
+            type SS58Prefix = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::SS58Prefix;
             /// Runtime version.
-            type Version = <$t as SystemConfig>::Version;
+            type Version = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::Version;
         }
 
         impl pallet_timestamp::Config for Runtime {
             type MinimumPeriod = <$t as SystemConfig>::SlotDuration;
             /// A timestamp: milliseconds since the unix epoch.
             type Moment = u64;
-            type OnTimestampSet = <$t as SystemConfig>::OnTimestampSet;
+            type OnTimestampSet = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::OnTimestampSet;
             /// Rerun benchmarks if you are making changes to runtime configuration.
             type WeightInfo = <$t as SystemWeight>::Timestamp;
         }
@@ -139,7 +139,7 @@ macro_rules! impl_openzeppelin_system {
             type RuntimeCall = RuntimeCall;
             type RuntimeEvent = RuntimeEvent;
             type RuntimeOrigin = RuntimeOrigin;
-            type ScheduleOrigin = <$t as SystemConfig>::ScheduleOrigin;
+            type ScheduleOrigin = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::ScheduleOrigin;
             type WeightInfo = <$t as SystemWeight>::Scheduler;
         }
 
@@ -161,7 +161,7 @@ macro_rules! impl_openzeppelin_system {
                 >,
             >;
             type Currency = Balances;
-            type ManagerOrigin = <$t as SystemConfig>::PreimageOrigin;
+            type ManagerOrigin = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::PreimageOrigin;
             type RuntimeEvent = RuntimeEvent;
             type WeightInfo = <$t as SystemWeight>::Preimage;
         }
@@ -178,11 +178,11 @@ macro_rules! impl_openzeppelin_system {
             type AnnouncementDepositFactor = AnnouncementDepositFactor;
             type CallHasher = BlakeTwo256;
             type Currency = Balances;
-            type MaxPending = <$t as SystemConfig>::MaxPendingProxies;
-            type MaxProxies = <$t as SystemConfig>::MaxProxies;
+            type MaxPending = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::MaxPendingProxies;
+            type MaxProxies = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::MaxProxies;
             type ProxyDepositBase = ProxyDepositBase;
             type ProxyDepositFactor = ProxyDepositFactor;
-            type ProxyType = <$t as SystemConfig>::ProxyType;
+            type ProxyType = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::ProxyType;
             type RuntimeCall = RuntimeCall;
             type RuntimeEvent = RuntimeEvent;
             type WeightInfo = <$t as SystemWeight>::Proxy;
@@ -193,11 +193,11 @@ macro_rules! impl_openzeppelin_system {
             /// The type for recording an account's balance.
             type Balance = Balance;
             type DustRemoval = ();
-            type ExistentialDeposit = <$t as SystemConfig>::ExistentialDeposit;
+            type ExistentialDeposit = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::ExistentialDeposit;
             type FreezeIdentifier = ();
-            type MaxFreezes = <$t as SystemConfig>::MaxFreezes;
-            type MaxLocks = <$t as SystemConfig>::MaxLocks;
-            type MaxReserves = <$t as SystemConfig>::MaxReserves;
+            type MaxFreezes = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::MaxFreezes;
+            type MaxLocks = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::MaxLocks;
+            type MaxReserves = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::MaxReserves;
             type ReserveIdentifier = [u8; 8];
             /// The ubiquitous event type.
             type RuntimeEvent = RuntimeEvent;
@@ -224,7 +224,7 @@ macro_rules! impl_openzeppelin_system {
             type CheckAssociatedRelayNumber = RelayNumberStrictlyIncreases;
             #[cfg(feature = "async-backing")]
             type CheckAssociatedRelayNumber = RelayNumberMonotonicallyIncreases;
-            type ConsensusHook = <$t as SystemConfig>::ConsensusHook;
+            type ConsensusHook = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::ConsensusHook;
             type DmpQueue = frame_support::traits::EnqueueWithOrigin<MessageQueue, RelayOrigin>;
             type OnSystemEvent = ();
             type OutboundXcmpMessageSource = XcmpQueue;
@@ -247,7 +247,7 @@ macro_rules! impl_openzeppelin_system {
             type Currency = Balances;
             type DepositBase = DepositBase;
             type DepositFactor = DepositFactor;
-            type MaxSignatories = <$t as SystemConfig>::MaxSignatories;
+            type MaxSignatories = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::MaxSignatories;
             type RuntimeCall = RuntimeCall;
             type RuntimeEvent = RuntimeEvent;
             type WeightInfo = <$t as SystemWeight>::Multisig;

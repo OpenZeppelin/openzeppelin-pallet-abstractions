@@ -6,7 +6,7 @@
 //! - `pallet_asset_manager`
 //!
 //! # Parameters
-//! - `$t`: A type that implements the `AssetsConfig` trait, providing the necessary associated types
+//! - `$t`: A type that implements the `AssetsConfigFull` trait, providing the necessary associated types
 //!   and configurations.
 //!
 //! # Important
@@ -28,28 +28,28 @@ macro_rules! impl_openzeppelin_assets {
             pub struct BenchmarkHelper;
             impl<AssetIdParameter> pallet_assets::BenchmarkHelper<AssetIdParameter> for BenchmarkHelper
             where
-                AssetIdParameter: From<<$t as AssetsConfig>::AssetId>,
+                AssetIdParameter: From<<$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::AssetId>,
             {
                 fn create_asset_id_parameter(id: u32) -> AssetIdParameter {
-                    (id as <$t as AssetsConfig>::AssetId).into()
+                    (id as <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::AssetId).into()
                 }
             }
         }
 
         impl pallet_assets::Config for Runtime {
-            type ApprovalDeposit = <$t as AssetsConfig>::ApprovalDeposit;
-            type AssetAccountDeposit = <$t as AssetsConfig>::AssetAccountDeposit;
-            type AssetDeposit = <$t as AssetsConfig>::AssetDeposit;
-            type AssetId = <$t as AssetsConfig>::AssetId;
-            type AssetIdParameter = parity_scale_codec::Compact<<$t as AssetsConfig>::AssetId>;
+            type ApprovalDeposit = <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::ApprovalDeposit;
+            type AssetAccountDeposit = <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::AssetAccountDeposit;
+            type AssetDeposit = <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::AssetDeposit;
+            type AssetId = <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::AssetId;
+            type AssetIdParameter = parity_scale_codec::Compact<<$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::AssetId>;
             type Balance = Balance;
             #[cfg(feature = "runtime-benchmarks")]
             type BenchmarkHelper = BenchmarkHelper;
             type CallbackHandle = ();
-            type CreateOrigin = <$t as AssetsConfig>::CreateOrigin;
+            type CreateOrigin = <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::CreateOrigin;
             type Currency = Balances;
             type Extra = ();
-            type ForceOrigin = <$t as AssetsConfig>::ForceOrigin;
+            type ForceOrigin = <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::ForceOrigin;
             type Freezer = ();
             type MetadataDepositBase = MetadataDepositBase;
             type MetadataDepositPerByte = MetadataDepositPerByte;
@@ -75,16 +75,16 @@ macro_rules! impl_openzeppelin_assets {
             type OnChargeTransaction = pallet_transaction_payment::FungibleAdapter<Balances, ()>;
             type OperationalFeeMultiplier = OperationalFeeMultiplier;
             type RuntimeEvent = RuntimeEvent;
-            type WeightToFee = <$t as AssetsConfig>::WeightToFee;
+            type WeightToFee = <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::WeightToFee;
         }
 
         impl pallet_asset_manager::Config for Runtime {
             type AssetId = AssetId;
-            type AssetRegistrar = <$t as AssetsConfig>::AssetRegistrar;
-            type AssetRegistrarMetadata = <$t as AssetsConfig>::AssetRegistrarMetadata;
+            type AssetRegistrar = <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::AssetRegistrar;
+            type AssetRegistrarMetadata = <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::AssetRegistrarMetadata;
             type Balance = Balance;
-            type ForeignAssetModifierOrigin = <$t as AssetsConfig>::ForeignAssetModifierOrigin;
-            type ForeignAssetType = <$t as AssetsConfig>::AssetType;
+            type ForeignAssetModifierOrigin = <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::ForeignAssetModifierOrigin;
+            type ForeignAssetType = <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::AssetType;
             type RuntimeEvent = RuntimeEvent;
             type WeightInfo = <$t as AssetsWeight>::AssetManager;
         }
