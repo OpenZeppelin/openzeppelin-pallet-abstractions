@@ -9,14 +9,14 @@ readme = "README.md"
 version = "0.1.0"
 
 [dependencies]
-frame-support = { git = "https://github.com/paritytech/polkadot-sdk", default-features = false, rev = "110d90bb85f866cc757287526022a66f3d576524" }
-frame-system = { git = "https://github.com/paritytech/polkadot-sdk", default-features = false, rev = "110d90bb85f866cc757287526022a66f3d576524" }
+frame-support = { git = "https://github.com/moondance-labs/polkadot-sdk", default-features = false, rev = "33a925ed7a1a70f3db904cb88bc301c7b6c0ce30" }
+frame-system = { git = "https://github.com/moondance-labs/polkadot-sdk", default-features = false, rev = "33a925ed7a1a70f3db904cb88bc301c7b6c0ce30" }
 scale-info = { version = "2.11.1", default-features = false }
-sp-std = { git = "https://github.com/paritytech/polkadot-sdk", default-features = false, rev = "110d90bb85f866cc757287526022a66f3d576524" }
-sp-version = { git = "https://github.com/paritytech/polkadot-sdk", default-features = false, rev = "110d90bb85f866cc757287526022a66f3d576524" }
+sp-std = { git = "https://github.com/moondance-labs/polkadot-sdk", default-features = false, rev = "33a925ed7a1a70f3db904cb88bc301c7b6c0ce30" }
+sp-version = { git = "https://github.com/moondance-labs/polkadot-sdk", default-features = false, rev = "33a925ed7a1a70f3db904cb88bc301c7b6c0ce30" }
 
 # Cumulus
-cumulus-primitives-core = { git = "https://github.com/paritytech/polkadot-sdk", default-features = false, rev = "110d90bb85f866cc757287526022a66f3d576524" }
+cumulus-primitives-core = { git = "https://github.com/moondance-labs/polkadot-sdk", default-features = false, rev = "33a925ed7a1a70f3db904cb88bc301c7b6c0ce30" }
 
 [features]
 default = [ "std" ]
