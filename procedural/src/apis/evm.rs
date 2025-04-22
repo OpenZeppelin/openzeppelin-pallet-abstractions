@@ -81,9 +81,7 @@ pub fn evm_apis(
 
             /// For a given account address and index, returns pallet_evm::AccountStorages.
             fn storage_at(address: sp_core::H160, index: sp_core::U256) -> sp_core::H256 {
-                let mut tmp = [0u8; 32];
-                index.to_big_endian(&mut tmp);
-                pallet_evm::AccountStorages::<#runtime>::get(address, sp_core::H256::from_slice(&tmp[..]))
+                pallet_evm::AccountStorages::<#runtime>::get(address, sp_core::H256::from(index.to_big_endian()))
             }
 
             /// Returns a frame_ethereum::call response.
