@@ -69,7 +69,6 @@ macro_rules! impl_openzeppelin_evm {
             type Runner = pallet_evm::runner::stack::Runner<Self>;
             // The overarching event type.
             type RuntimeEvent = RuntimeEvent;
-            type SuicideQuickClearLimit = SuicideQuickClearLimit;
             // Get the timestamp for the current block.
             type Timestamp = Timestamp;
             type WeightInfo = <$t as EvmWeight>::Evm;
