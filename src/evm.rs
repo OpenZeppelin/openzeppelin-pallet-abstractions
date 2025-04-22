@@ -26,19 +26,24 @@ macro_rules! impl_openzeppelin_evm {
             type ExtraDataLength = ConstU32<30>;
             type PostLogContent = PostBlockAndTxnHashes;
             type RuntimeEvent = RuntimeEvent;
-            type StateRoot = pallet_ethereum::IntermediateStateRoot<Self>;
+            type StateRoot = pallet_ethereum::IntermediateStateRoot<Self::Version>;
         }
+
+        /// The maximum storage growth per block in bytes.
+        const MAX_STORAGE_GROWTH: u64 = 400 * 1024;
 
         parameter_types! {
             // Block gas limit is calculated with target for 75% of block capacity and ratio of maximum block weight and weight per gas
             pub BlockGasLimit: U256 = U256::from(NORMAL_DISPATCH_RATIO * MAXIMUM_BLOCK_WEIGHT.ref_time() / WEIGHT_PER_GAS);
             // To calculate ratio of Gas Limit to PoV size we take the BlockGasLimit we calculated before, and divide it on MAX_POV_SIZE
             pub GasLimitPovSizeRatio: u64 = BlockGasLimit::get().min(u64::MAX.into()).low_u64().saturating_div(cumulus_primitives_core::relay_chain::MAX_POV_SIZE as u64);
+            pub GasLimitStorageGrowthRatio: u64 = BlockGasLimit::get().min(u64::MAX.into()).low_u64().saturating_div(MAX_STORAGE_GROWTH);
             pub WeightPerGas: Weight = Weight::from_parts(WEIGHT_PER_GAS, 0);
             pub SuicideQuickClearLimit: u32 = 0;
         }
 
         impl pallet_evm::Config for Runtime {
+            type AccountProvider = pallet_evm::FrameSystemAccountProvider<Self>;
             // Mapping from address to account id.
             type AddressMapping = <$t as EvmConfig>::AddressMapping;
             // The block gas limit. Can be a simple constant, or an adjustment algorithm in another pallet.
@@ -56,6 +61,8 @@ macro_rules! impl_openzeppelin_evm {
             type FindAuthor = <$t as EvmConfig>::FindAuthor;
             // Gas limit PoV size ratio.
             type GasLimitPovSizeRatio = GasLimitPovSizeRatio;
+            // Gas limit storage growth ratio.
+            type GasLimitStorageGrowthRatio = GasLimitStorageGrowthRatio;
             // Maps Ethereum gas to Substrate weight.
             type GasWeightMapping = pallet_evm::FixedGasWeightMapping<Self>;
             // To handle fee deduction for EVM transactions.

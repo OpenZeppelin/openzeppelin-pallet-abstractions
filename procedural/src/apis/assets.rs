@@ -49,7 +49,7 @@ impl TryFrom<&[Item]> for AssetAPIFields {
             balance,
             call,
             oracle_key,
-            oracle
+            oracle,
         })
     }
 }
@@ -61,7 +61,7 @@ pub fn assets_apis(
     balance: &Ident,
     call: &Ident,
     oracle_key: &Ident,
-    oracle: &Ident
+    oracle: &Ident,
 ) -> TokenStream {
     quote! {
         impl pallet_transaction_payment_rpc_runtime_api::TransactionPaymentApi<#block, #balance>

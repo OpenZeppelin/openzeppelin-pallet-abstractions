@@ -265,7 +265,7 @@ pub fn evm_apis(
         impl fp_rpc::ConvertTransactionRuntimeApi<#block> for #runtime {
             /// Converts an ethereum transaction into a transaction suitable for the runtime.
             fn convert_transaction(transaction: pallet_ethereum::Transaction) -> <#block as sp_runtime::traits::Block>::Extrinsic {
-                UncheckedExtrinsic::new_unsigned(
+                UncheckedExtrinsic::new_bare(
                     pallet_ethereum::Call::<#runtime>::transact { transaction }.into(),
                 )
             }
