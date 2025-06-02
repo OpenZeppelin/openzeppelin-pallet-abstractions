@@ -117,6 +117,7 @@ macro_rules! impl_openzeppelin_consensus {
             type ValidatorId = <Self as frame_system::Config>::AccountId;
             // we don't have stash and controller, thus we don't need the convert as well.
             type ValidatorIdOf = pallet_collator_selection::IdentityCollator;
+            type DisablingStrategy = ();
             type WeightInfo = <$t as ConsensusWeight>::Session;
         }
     };

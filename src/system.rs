@@ -154,6 +154,7 @@ macro_rules! impl_openzeppelin_system {
             // Required origin to schedule or cancel calls.
             type ScheduleOrigin = <$t as SystemConfig>::ScheduleOrigin;
             type WeightInfo = <$t as SystemWeight>::Scheduler;
+            type BlockNumberProvider = frame_system::Pallet<Runtime>;
         }
 
         parameter_types! {
@@ -216,6 +217,7 @@ macro_rules! impl_openzeppelin_system {
             // The overarching event type.
             type RuntimeEvent = RuntimeEvent;
             type WeightInfo = <$t as SystemWeight>::Proxy;
+            type BlockNumberProvider = frame_system::Pallet<Runtime>;
         }
 
 
@@ -318,8 +320,8 @@ macro_rules! impl_openzeppelin_system {
             // The overarching event type.
             type RuntimeEvent = RuntimeEvent;
             type WeightInfo = <$t as SystemWeight>::Multisig;
+            type BlockNumberProvider = frame_system::Pallet<Runtime>;
         }
-
     };
 }
 

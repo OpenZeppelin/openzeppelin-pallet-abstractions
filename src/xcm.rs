@@ -174,6 +174,7 @@ macro_rules! impl_openzeppelin_xcm {
             type XcmRecorder = PolkadotXcm;
             // Sends XCM messages, using a router to determine the appropriate destination.
             type XcmSender = XcmRouter;
+            type XcmEventEmitter = PolkadotXcm;
         }
 
 
@@ -242,6 +243,13 @@ macro_rules! impl_openzeppelin_xcm {
 
             // Maximum number of queued version discovery requests.
             const VERSION_DISCOVERY_QUEUE_SIZE: u32 = 100;
+            // xcm_executor::Config::Aliasers also uses pallet_xcm::AuthorizedAliasers.
+            type AuthorizedAliasConsideration = HoldConsideration<
+                AccountId,
+                Balances,
+                AuthorizeAliasHoldReason,
+                LinearStoragePrice<DepositPerItem, DepositPerByte, Balance>,
+            >;
         }
 
 

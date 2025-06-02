@@ -78,6 +78,7 @@ macro_rules! impl_openzeppelin_assets {
             type RuntimeEvent = RuntimeEvent;
             type StringLimit = StringLimit;
             type WeightInfo = <$t as AssetsWeight>::Assets;
+            type Holder = ();
         }
 
         parameter_types! {
