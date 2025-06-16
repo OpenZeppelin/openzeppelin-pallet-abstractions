@@ -98,6 +98,7 @@ macro_rules! impl_openzeppelin_governance {
             // The minimum period of vote locking.
             type VoteLockingPeriod = <$t as GovernanceConfig>::ConvictionVoteLockingPeriod;
             type WeightInfo = <$t as GovernanceWeight>::ConvictionVoting;
+            type BlockNumberProvider = System;
             type VotingHooks = ();
         }
 
