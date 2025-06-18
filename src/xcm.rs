@@ -190,6 +190,9 @@ macro_rules! impl_openzeppelin_xcm {
         parameter_types! {
             pub const MaxLockers: u32 = 8;
             pub const MaxRemoteLockConsumers: u32 = 0;
+            pub const DepositPerItem: Balance = deposit(1, 0);
+	        pub const DepositPerByte: Balance = deposit(0, 1);
+            pub const AuthorizeAliasHoldReason: RuntimeHoldReason = RuntimeHoldReason::PolkadotXcm(pallet_xcm::HoldReason::AuthorizeAlias);
         }
 
         // Pallet to handle XCM messages.
@@ -244,11 +247,11 @@ macro_rules! impl_openzeppelin_xcm {
             // Maximum number of queued version discovery requests.
             const VERSION_DISCOVERY_QUEUE_SIZE: u32 = 100;
             // xcm_executor::Config::Aliasers also uses pallet_xcm::AuthorizedAliasers.
-            type AuthorizedAliasConsideration = HoldConsideration<
+            type AuthorizedAliasConsideration = frame_support::traits::fungible::HoldConsideration<
                 AccountId,
                 Balances,
                 AuthorizeAliasHoldReason,
-                LinearStoragePrice<DepositPerItem, DepositPerByte, Balance>,
+                frame_support::traits::LinearStoragePrice<DepositPerItem, DepositPerByte, Balance>,
             >;
         }
 
