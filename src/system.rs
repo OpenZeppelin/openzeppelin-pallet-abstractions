@@ -113,6 +113,11 @@ macro_rules! impl_openzeppelin_system {
             type Version = <$t as SystemConfig>::Version;
         }
 
+        impl cumulus_pallet_weight_reclaim::Config for Runtime {
+            // TODO: replace with generated weights
+            type WeightInfo = ();
+        }
+
         // A pallet that provides a way for consensus systems to set and check the onchain time.
         impl pallet_timestamp::Config for Runtime {
             // Timestamp must increment by at least <MinimumPeriod> between sequential blocks
