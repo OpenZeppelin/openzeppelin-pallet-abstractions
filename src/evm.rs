@@ -18,6 +18,14 @@
 #[macro_export]
 macro_rules! impl_openzeppelin_evm {
     ($t:ty) => {
+        // Required by pallet_ethereum::StateRoot = IntermediateStateRoot which
+        // requires Get<RuntimeVersion> implemented in scope by the Runtime.
+        impl sp_core::Get<sp_version::RuntimeVersion> for Runtime {
+            fn get() -> sp_version::RuntimeVersion {
+                VERSION
+            }
+        }
+
         parameter_types! {
             pub const PostBlockAndTxnHashes: PostLogContent = PostLogContent::BlockAndTxnHashes;
         }
