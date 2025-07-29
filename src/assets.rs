@@ -59,7 +59,6 @@ macro_rules! impl_openzeppelin_assets {
             type AssetIdParameter = parity_scale_codec::Compact<<$t as AssetsConfig>::AssetId>;
             // The units in which we record balances.
             type Balance = Balance;
-            #[cfg(feature = "runtime-benchmarks")]
             type BenchmarkHelper = BenchmarkHelper;
             type CallbackHandle = ();
             // Standard asset class creation is only allowed if the origin attempting it and the
@@ -294,10 +293,8 @@ macro_rules! impl_openzeppelin_assets {
             <$t as AssetsConfig>::AssetsToBlockAuthor
         >;
 
-        #[cfg(feature = "runtime-benchmarks")]
         pub struct AssetTxPaymentBenchmarkHelper;
 
-        #[cfg(feature = "runtime-benchmarks")]
         // TODO: implement the functions next time we run the benchmarks
         impl pallet_asset_tx_payment::BenchmarkHelperTrait<AccountId, <$t as AssetsConfig>::AssetId, xcm::v3::MultiLocation> for AssetTxPaymentBenchmarkHelper {
             /// Returns the `AssetId` to be used in the liquidity pool by the benchmarking code.
@@ -316,7 +313,6 @@ macro_rules! impl_openzeppelin_assets {
             type OnChargeAssetTransaction = OnCharge;
             type RuntimeEvent = RuntimeEvent;
             type WeightInfo = <$t as AssetsWeight>::AssetTxPayment;
-            #[cfg(feature = "runtime-benchmarks")]
             type BenchmarkHelper = AssetTxPaymentBenchmarkHelper;
         }
 
