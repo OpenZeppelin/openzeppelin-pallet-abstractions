@@ -28,6 +28,7 @@ macro_rules! impl_openzeppelin_governance {
             type WeightInfo = <$t as GovernanceWeight>::Sudo;
         }
 
+        #[cfg(feature = "runtime-benchmarks")]
         parameter_types! {
             pub LocationParents: u8 = 1;
             pub BenchmarkParaId: u8 = 0;
@@ -40,6 +41,7 @@ macro_rules! impl_openzeppelin_governance {
             type AssetKind = AssetKind;
             // Type for converting the balance of an [Self::AssetKind] to the balance of the native asset.
             type BalanceConverter = frame_support::traits::tokens::UnityAssetBalanceConversion;
+            #[cfg(feature = "runtime-benchmarks")]
             type BenchmarkHelper = polkadot_runtime_common::impls::benchmarks::TreasuryArguments<
                 LocationParents,
                 BenchmarkParaId,
