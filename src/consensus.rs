@@ -91,10 +91,17 @@ macro_rules! impl_openzeppelin_consensus {
     };
 }
 
+// IMPORTANT: The order of pallets here determines the genesis build order.
+// Session MUST come BEFORE Aura and AuraExt because:
+// 1. Session's genesis_build populates pallet_aura::Authorities via SessionHandler
+// 2. AuraExt's genesis_build reads from pallet_aura::Authorities and caches it
+// If Session runs after AuraExt, the cache will be empty, causing:
+// "Invalid AuRa author index X for authorities: BoundedVec([], N)" panic
+// when the relay chain validates parachain blocks.
 pub const PALLET_NAMES: [(&str, &str); 5] = [
     ("Authorship", "pallet_authorship"),
-    ("Aura", "pallet_aura"),
-    ("AuraExt", "cumulus_pallet_aura_ext"),
     ("CollatorSelection", "pallet_collator_selection"),
     ("Session", "pallet_session"),
+    ("Aura", "pallet_aura"),
+    ("AuraExt", "cumulus_pallet_aura_ext"),
 ];
