@@ -81,8 +81,7 @@ pub fn evm_apis(
 
             /// For a given account address and index, returns pallet_evm::AccountStorages.
             fn storage_at(address: sp_core::H160, index: sp_core::U256) -> sp_core::H256 {
-                let mut tmp = [0u8; 32];
-                index.to_big_endian(&mut tmp);
+                let tmp = index.to_big_endian();
                 pallet_evm::AccountStorages::<#runtime>::get(address, sp_core::H256::from_slice(&tmp[..]))
             }
 
@@ -265,7 +264,7 @@ pub fn evm_apis(
         impl fp_rpc::ConvertTransactionRuntimeApi<#block> for #runtime {
             /// Converts an ethereum transaction into a transaction suitable for the runtime.
             fn convert_transaction(transaction: pallet_ethereum::Transaction) -> <#block as sp_runtime::traits::Block>::Extrinsic {
-                UncheckedExtrinsic::new_unsigned(
+                UncheckedExtrinsic::new_bare(
                     pallet_ethereum::Call::<#runtime>::transact { transaction }.into(),
                 )
             }

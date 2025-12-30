@@ -200,11 +200,13 @@ pub fn system_apis(
             }
 
             fn get_preset(id: &Option<sp_genesis_builder::PresetId>) -> Option<sp_std::prelude::Vec<u8>> {
-                frame_support::genesis_builder_helper::get_preset::<#genesis>(id, |_| None)
+                frame_support::genesis_builder_helper::get_preset::<#genesis>(id, |pid| {
+                    crate::genesis_config_presets::get_preset(pid)
+                })
             }
 
             fn preset_names() -> sp_std::prelude::Vec<sp_genesis_builder::PresetId> {
-                Default::default()
+                crate::genesis_config_presets::preset_names()
             }
         }
     }

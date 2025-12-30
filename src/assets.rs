@@ -78,6 +78,7 @@ macro_rules! impl_openzeppelin_assets {
             type RuntimeEvent = RuntimeEvent;
             type StringLimit = StringLimit;
             type WeightInfo = <$t as AssetsWeight>::Assets;
+            type Holder = ();
         }
 
         parameter_types! {
@@ -100,6 +101,7 @@ macro_rules! impl_openzeppelin_assets {
             type OperationalFeeMultiplier = OperationalFeeMultiplier;
             type RuntimeEvent = RuntimeEvent;
             type WeightToFee = <$t as AssetsConfig>::WeightToFee;
+            type WeightInfo = <$t as AssetsWeight>::TransactionPayment;
         }
 
         impl pallet_asset_manager::Config for Runtime {
@@ -143,6 +145,21 @@ macro_rules! impl_openzeppelin_assets {
             sp_std::marker::PhantomData<(Converter, FeeCreditor, TipCreditor)>,
         );
 
+        #[doc(hidden)]
+        extern crate alloc;
+
+        use alloc::sync::Arc;
+        use sp_std::convert::TryFrom;
+        use xcm::v3::{MultiLocation as MultiLocationV3, Junctions as JunctionsV3};
+        use xcm::v4::{Location as LocationV4, Junctions as JunctionsV4};
+
+        fn convert_v3_to_v4(v3: MultiLocationV3) -> Option<LocationV4> {
+            Some(LocationV4 {
+                parents: v3.parents,
+                interior: JunctionsV4::try_from(v3.interior).ok()?, // Returns None if conversion fails
+            })
+        }
+
         /// Default implementation for a runtime instantiating this pallet, a balance to asset converter and
         /// a credit handler.
         impl<Runtime, Converter, FeeCreditor, TipCreditor> pallet_asset_tx_payment::OnChargeAssetTransaction<Runtime>
@@ -172,7 +189,8 @@ macro_rules! impl_openzeppelin_assets {
                 // We don't know the precision of the underlying asset. Because the converted fee could be
                 // less than one (e.g. 0.5) but gets rounded down by integer division we introduce a minimum
                 // fee.
-                let asset_id: AssetId = AssetType::Xcm(asset_id).into();
+                let xcm_asset_id = convert_v3_to_v4(asset_id).ok_or(sp_runtime::transaction_validity::TransactionValidityError::from(sp_runtime::transaction_validity::InvalidTransaction::Payment))?;
+                let asset_id: AssetId = AssetType::Xcm(xcm_asset_id).into();
                 let min_converted_fee = if fee.is_zero() { sp_runtime::traits::Zero::zero() } else { sp_runtime::traits::One::one() };
                 let converted_fee = Converter::to_asset_balance(fee, asset_id.clone())
                     .map_err(|_| sp_runtime::transaction_validity::TransactionValidityError::from(sp_runtime::transaction_validity::InvalidTransaction::Payment))?
@@ -191,6 +209,35 @@ macro_rules! impl_openzeppelin_assets {
                     frame_support::traits::tokens::Fortitude::Polite,
                 )
                 .map_err(|_| sp_runtime::transaction_validity::TransactionValidityError::from(sp_runtime::transaction_validity::InvalidTransaction::Payment))
+            }
+
+            /// Check if the predicted fee from the transaction origin can be withdrawn.
+            ///
+            /// Note: The `fee` already includes the `tip`.
+            fn can_withdraw_fee(
+                who: &Runtime::AccountId,
+                _call: &Runtime::RuntimeCall,
+                _info: &sp_runtime::traits::DispatchInfoOf<Runtime::RuntimeCall>,
+                asset_id: Self::AssetId,
+                fee: Self::Balance,
+                _tip: Self::Balance,
+            ) -> Result<(), sp_runtime::transaction_validity::TransactionValidityError> {
+                use sp_runtime::traits::Zero;
+                // We don't know the precision of the underlying asset. Because the converted fee could be
+                // less than one (e.g. 0.5) but gets rounded down by integer division we introduce a minimum
+                // fee.
+                let xcm_asset_id = convert_v3_to_v4(asset_id).ok_or(sp_runtime::transaction_validity::TransactionValidityError::from(sp_runtime::transaction_validity::InvalidTransaction::Payment))?;
+                let asset_id: AssetId = AssetType::Xcm(xcm_asset_id).into();
+                let min_converted_fee = if fee.is_zero() { sp_runtime::traits::Zero::zero() } else { sp_runtime::traits::One::one() };
+                let converted_fee = Converter::to_asset_balance(fee, asset_id.clone())
+                    .map_err(|_| sp_runtime::transaction_validity::TransactionValidityError::from(sp_runtime::transaction_validity::InvalidTransaction::Payment))?
+                    .max(min_converted_fee);
+                let can_withdraw =
+                <Runtime::Fungibles as frame_support::traits::fungibles::Inspect<Runtime::AccountId>>::can_withdraw(asset_id, who, converted_fee);
+                if can_withdraw != frame_support::traits::tokens::WithdrawConsequence::Success {
+                    return Err(sp_runtime::transaction_validity::InvalidTransaction::Payment.into())
+                }
+                Ok(())
             }
 
             /// Note: The `corrected_fee` already includes the `tip`.
@@ -247,10 +294,30 @@ macro_rules! impl_openzeppelin_assets {
             <$t as AssetsConfig>::AssetsToBlockAuthor
         >;
 
+        #[cfg(feature = "runtime-benchmarks")]
+        pub struct AssetTxPaymentBenchmarkHelper;
+
+        #[cfg(feature = "runtime-benchmarks")]
+        // TODO: implement the functions next time we run the benchmarks
+        impl pallet_asset_tx_payment::BenchmarkHelperTrait<AccountId, <$t as AssetsConfig>::AssetId, xcm::v3::MultiLocation> for AssetTxPaymentBenchmarkHelper {
+            /// Returns the `AssetId` to be used in the liquidity pool by the benchmarking code.
+            fn create_asset_id_parameter(id: u32) -> ( <$t as AssetsConfig>::AssetId, xcm::v3::MultiLocation) {
+                unimplemented!();
+            }
+            /// Create a liquidity pool for a given asset and sufficiently endow accounts to benchmark
+            /// the extension.
+            fn setup_balances_and_pool(asset_id: <$t as AssetsConfig>::AssetId, account: AccountId) {
+                unimplemented!();
+            }
+        }
+
         impl pallet_asset_tx_payment::Config for Runtime {
             type Fungibles = crate::Assets;
             type OnChargeAssetTransaction = OnCharge;
             type RuntimeEvent = RuntimeEvent;
+            type WeightInfo = <$t as AssetsWeight>::AssetTxPayment;
+            #[cfg(feature = "runtime-benchmarks")]
+            type BenchmarkHelper = AssetTxPaymentBenchmarkHelper;
         }
 
         parameter_types! {

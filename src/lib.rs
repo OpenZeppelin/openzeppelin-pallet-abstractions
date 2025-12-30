@@ -49,7 +49,6 @@ pub trait AssetsConfig: AssetsWeight {
     type AssetDeposit;
     type AssetId;
     type AssetType;
-    type BenchmarkHelper = ();
     type CreateOrigin;
     type ForceOrigin;
     type ForeignAssetModifierOrigin;

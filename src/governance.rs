@@ -77,6 +77,7 @@ macro_rules! impl_openzeppelin_governance {
             // Period between successive spends.
             type SpendPeriod = <$t as GovernanceConfig>::TreasurySpendPeriod;
             type WeightInfo = <$t as GovernanceWeight>::Treasury;
+            type BlockNumberProvider = System;
         }
 
         // Pallet for managing actual voting in polls.
@@ -97,6 +98,8 @@ macro_rules! impl_openzeppelin_governance {
             // The minimum period of vote locking.
             type VoteLockingPeriod = <$t as GovernanceConfig>::ConvictionVoteLockingPeriod;
             type WeightInfo = <$t as GovernanceWeight>::ConvictionVoting;
+            type BlockNumberProvider = System;
+            type VotingHooks = ();
         }
 
         // Pallet to allow some configurable origin: Config::WhitelistOrigin to whitelist some hash of a call, and
@@ -156,6 +159,7 @@ macro_rules! impl_openzeppelin_governance {
             // The counting type for votes. Usually just balance.
             type Votes = pallet_conviction_voting::VotesOf<Runtime>;
             type WeightInfo = <$t as GovernanceWeight>::Referenda;
+            type BlockNumberProvider = frame_system::Pallet<Runtime>;
         }
     };
 }

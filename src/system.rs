@@ -113,6 +113,11 @@ macro_rules! impl_openzeppelin_system {
             type Version = <$t as SystemConfig>::Version;
         }
 
+        impl cumulus_pallet_weight_reclaim::Config for Runtime {
+            // TODO: replace with generated weights
+            type WeightInfo = ();
+        }
+
         // A pallet that provides a way for consensus systems to set and check the onchain time.
         impl pallet_timestamp::Config for Runtime {
             // Timestamp must increment by at least <MinimumPeriod> between sequential blocks
@@ -154,6 +159,7 @@ macro_rules! impl_openzeppelin_system {
             // Required origin to schedule or cancel calls.
             type ScheduleOrigin = <$t as SystemConfig>::ScheduleOrigin;
             type WeightInfo = <$t as SystemWeight>::Scheduler;
+            type BlockNumberProvider = frame_system::Pallet<Runtime>;
         }
 
         parameter_types! {
@@ -216,6 +222,7 @@ macro_rules! impl_openzeppelin_system {
             // The overarching event type.
             type RuntimeEvent = RuntimeEvent;
             type WeightInfo = <$t as SystemWeight>::Proxy;
+            type BlockNumberProvider = frame_system::Pallet<Runtime>;
         }
 
 
@@ -246,6 +253,7 @@ macro_rules! impl_openzeppelin_system {
             // The overarching hold reason.
             type RuntimeHoldReason = RuntimeHoldReason;
             type WeightInfo = <$t as SystemWeight>::Balances;
+	        type DoneSlashHandler = ();
         }
 
         // A stateless pallet with helpers for dispatch management which does no re-authentication.
@@ -291,6 +299,7 @@ macro_rules! impl_openzeppelin_system {
             type WeightInfo = <$t as SystemWeight>::ParachainSystem;
             // The message handler that will be invoked when messages are received via XCMP.
             type XcmpMessageHandler = XcmpQueue;
+            type SelectCore = cumulus_pallet_parachain_system::DefaultCoreSelector<Runtime>;
         }
 
 
@@ -316,8 +325,8 @@ macro_rules! impl_openzeppelin_system {
             // The overarching event type.
             type RuntimeEvent = RuntimeEvent;
             type WeightInfo = <$t as SystemWeight>::Multisig;
+            type BlockNumberProvider = frame_system::Pallet<Runtime>;
         }
-
     };
 }
 
