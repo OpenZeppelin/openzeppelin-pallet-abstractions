@@ -89,7 +89,7 @@ macro_rules! impl_openzeppelin_evm {
 	        type CreateOriginFilter = ();
             // Allow every account create
             type CreateInnerOriginFilter = ();
-            type WeightInfo = <$t as EvmWeight>::Evm;
+            type WeightInfo = <$t as openzeppelin_pallet_abstractions::EvmWeightFull>::Evm;
             // Weight corresponding to a gas unit.
             type WeightPerGas = WeightPerGas;
             // Allow the origin to withdraw on behalf of given address.

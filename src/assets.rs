@@ -38,25 +38,25 @@ macro_rules! impl_openzeppelin_assets {
             pub struct BenchmarkHelper;
             impl<AssetIdParameter> pallet_assets::BenchmarkHelper<AssetIdParameter> for BenchmarkHelper
             where
-                AssetIdParameter: From<<$t as AssetsConfig>::AssetId>,
+                AssetIdParameter: From<<$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::AssetId>,
             {
                 fn create_asset_id_parameter(id: u32) -> AssetIdParameter {
-                    (id as <$t as AssetsConfig>::AssetId).into()
+                    (id as <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::AssetId).into()
                 }
             }
         }
 
         impl pallet_assets::Config for Runtime {
             // The amount of funds that must be reserved when creating a new approval.
-            type ApprovalDeposit = <$t as AssetsConfig>::ApprovalDeposit;
+            type ApprovalDeposit = <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::ApprovalDeposit;
             // The amount of funds that must be reserved for a non-provider asset account to be maintained.
-            type AssetAccountDeposit = <$t as AssetsConfig>::AssetAccountDeposit;
+            type AssetAccountDeposit = <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::AssetAccountDeposit;
             // The basic amount of funds that must be reserved for an asset.
-            type AssetDeposit = <$t as AssetsConfig>::AssetDeposit;
+            type AssetDeposit = <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::AssetDeposit;
             // Identifier for the class of asset.
-            type AssetId = <$t as AssetsConfig>::AssetId;
+            type AssetId = <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::AssetId;
             // Wrapper around `AssetId` to use in dispatchable call signatures.
-            type AssetIdParameter = parity_scale_codec::Compact<<$t as AssetsConfig>::AssetId>;
+            type AssetIdParameter = parity_scale_codec::Compact<<$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::AssetId>;
             // The units in which we record balances.
             type Balance = Balance;
             #[cfg(feature = "runtime-benchmarks")]
@@ -64,12 +64,12 @@ macro_rules! impl_openzeppelin_assets {
             type CallbackHandle = ();
             // Standard asset class creation is only allowed if the origin attempting it and the
             // asset class are in this set.
-            type CreateOrigin = <$t as AssetsConfig>::CreateOrigin;
+            type CreateOrigin = <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::CreateOrigin;
             type Currency = Balances;
             type Extra = ();
             // The origin which may forcibly create or destroy an asset or otherwise alter privileged
 	    // attributes.
-            type ForceOrigin = <$t as AssetsConfig>::ForceOrigin;
+            type ForceOrigin = <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::ForceOrigin;
             type Freezer = ();
             type MetadataDepositBase = MetadataDepositBase;
             type MetadataDepositPerByte = MetadataDepositPerByte;
@@ -77,7 +77,7 @@ macro_rules! impl_openzeppelin_assets {
             // The overarching event type
             type RuntimeEvent = RuntimeEvent;
             type StringLimit = StringLimit;
-            type WeightInfo = <$t as AssetsWeight>::Assets;
+            type WeightInfo = <$t as openzeppelin_pallet_abstractions::AssetsWeightFull>::Assets;
             type Holder = ();
         }
 
@@ -100,27 +100,27 @@ macro_rules! impl_openzeppelin_assets {
 	        // `priority`
             type OperationalFeeMultiplier = OperationalFeeMultiplier;
             type RuntimeEvent = RuntimeEvent;
-            type WeightToFee = <$t as AssetsConfig>::WeightToFee;
-            type WeightInfo = <$t as AssetsWeight>::TransactionPayment;
+            type WeightToFee = <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::WeightToFee;
+            type WeightInfo = <$t as openzeppelin_pallet_abstractions::AssetsWeightFull>::TransactionPayment;
         }
 
         impl pallet_asset_manager::Config for Runtime {
             type AssetId = AssetId;
-            type AssetRegistrar = <$t as AssetsConfig>::AssetRegistrar;
-            type AssetRegistrarMetadata = <$t as AssetsConfig>::AssetRegistrarMetadata;
+            type AssetRegistrar = <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::AssetRegistrar;
+            type AssetRegistrarMetadata = <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::AssetRegistrarMetadata;
             type Balance = Balance;
-            type ForeignAssetModifierOrigin = <$t as AssetsConfig>::ForeignAssetModifierOrigin;
-            type ForeignAssetType = <$t as AssetsConfig>::AssetType;
+            type ForeignAssetModifierOrigin = <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::ForeignAssetModifierOrigin;
+            type ForeignAssetType = <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::AssetType;
             type RuntimeEvent = RuntimeEvent;
-            type WeightInfo = <$t as AssetsWeight>::AssetManager;
+            type WeightInfo = <$t as openzeppelin_pallet_abstractions::AssetsWeightFull>::AssetManager;
         }
 
         pub struct AssetConverter;
 
-        impl frame_support::traits::tokens::ConversionToAssetBalance<Balance, <$t as AssetsConfig>::AssetId, Balance> for AssetConverter {
+        impl frame_support::traits::tokens::ConversionToAssetBalance<Balance, <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::AssetId, Balance> for AssetConverter {
             type Error = sp_runtime::transaction_validity::InvalidTransaction;
 
-            fn to_asset_balance(balance: Balance, asset_id: <$t as AssetsConfig>::AssetId) -> Result<Balance, Self::Error> {
+            fn to_asset_balance(balance: Balance, asset_id: <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::AssetId) -> Result<Balance, Self::Error> {
                 let funding_asset_price = Oracle::get(&asset_id)
                     .ok_or(sp_runtime::transaction_validity::InvalidTransaction::Payment)?;
                 // FIXME: check if timestamp on oracle data is outdated.
@@ -287,11 +287,11 @@ macro_rules! impl_openzeppelin_assets {
         pub type OnCharge = TxFeeFungiblesAdapter<
             AssetConverter,
             CreditFungiblesToAccount<
-                <$t as AssetsConfig>::AccountId,
+                <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::AccountId,
                 crate::Assets,
-                <$t as AssetsConfig>::FungiblesToAccount
+                <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::FungiblesToAccount
             >,
-            <$t as AssetsConfig>::AssetsToBlockAuthor
+            <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::AssetsToBlockAuthor
         >;
 
         #[cfg(feature = "runtime-benchmarks")]
@@ -299,14 +299,14 @@ macro_rules! impl_openzeppelin_assets {
 
         #[cfg(feature = "runtime-benchmarks")]
         // TODO: implement the functions next time we run the benchmarks
-        impl pallet_asset_tx_payment::BenchmarkHelperTrait<AccountId, <$t as AssetsConfig>::AssetId, xcm::v3::MultiLocation> for AssetTxPaymentBenchmarkHelper {
+        impl pallet_asset_tx_payment::BenchmarkHelperTrait<AccountId, <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::AssetId, xcm::v3::MultiLocation> for AssetTxPaymentBenchmarkHelper {
             /// Returns the `AssetId` to be used in the liquidity pool by the benchmarking code.
-            fn create_asset_id_parameter(id: u32) -> ( <$t as AssetsConfig>::AssetId, xcm::v3::MultiLocation) {
+            fn create_asset_id_parameter(id: u32) -> ( <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::AssetId, xcm::v3::MultiLocation) {
                 unimplemented!();
             }
             /// Create a liquidity pool for a given asset and sufficiently endow accounts to benchmark
             /// the extension.
-            fn setup_balances_and_pool(asset_id: <$t as AssetsConfig>::AssetId, account: AccountId) {
+            fn setup_balances_and_pool(asset_id: <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::AssetId, account: AccountId) {
                 unimplemented!();
             }
         }
@@ -315,7 +315,7 @@ macro_rules! impl_openzeppelin_assets {
             type Fungibles = crate::Assets;
             type OnChargeAssetTransaction = OnCharge;
             type RuntimeEvent = RuntimeEvent;
-            type WeightInfo = <$t as AssetsWeight>::AssetTxPayment;
+            type WeightInfo = <$t as openzeppelin_pallet_abstractions::AssetsWeightFull>::AssetTxPayment;
             #[cfg(feature = "runtime-benchmarks")]
             type BenchmarkHelper = AssetTxPaymentBenchmarkHelper;
         }
@@ -329,7 +329,7 @@ macro_rules! impl_openzeppelin_assets {
         #[cfg(feature = "runtime-benchmarks")]
         pub struct OracleBenchmarkHelper;
         #[cfg(feature = "runtime-benchmarks")]
-        impl orml_oracle::BenchmarkHelper<<$t as AssetsConfig>::AssetId, sp_runtime::FixedU128, MaxFeedValues> for OracleBenchmarkHelper {
+        impl orml_oracle::BenchmarkHelper<<$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::AssetId, sp_runtime::FixedU128, MaxFeedValues> for OracleBenchmarkHelper {
             fn get_currency_id_value_pairs() -> sp_runtime::BoundedVec<(AssetId, sp_runtime::FixedU128), MaxFeedValues> {
                 sp_runtime::BoundedVec::default()
             }
@@ -344,13 +344,13 @@ macro_rules! impl_openzeppelin_assets {
                 ExpiresIn,
                 ()
             >;
-            type Time = <$t as AssetsConfig>::Timestamp;
-            type OracleKey = <$t as AssetsConfig>::AssetId;
+            type Time = <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::Timestamp;
+            type OracleKey = <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::AssetId;
             type OracleValue = sp_runtime::FixedU128;
-            type RootOperatorAccountId = <$t as AssetsConfig>::RootOperatorAccountId;
+            type RootOperatorAccountId = <$t as openzeppelin_pallet_abstractions::AssetsConfigFull>::RootOperatorAccountId;
             type Members = OracleMembership;
             type MaxHasDispatchedSize = ConstU32<20>;
-            type WeightInfo = <$t as AssetsWeight>::OrmlOracle;
+            type WeightInfo = <$t as openzeppelin_pallet_abstractions::AssetsWeightFull>::OrmlOracle;
             type MaxFeedValues = MaxFeedValues;
             #[cfg(feature = "runtime-benchmarks")]
             type BenchmarkHelper = OracleBenchmarkHelper;
@@ -370,7 +370,7 @@ macro_rules! impl_openzeppelin_assets {
             type MembershipInitialized = ();
             type MembershipChanged = Oracle;
             type MaxMembers = MaxMembers;
-            type WeightInfo = <$t as AssetsWeight>::OracleMembership;
+            type WeightInfo = <$t as openzeppelin_pallet_abstractions::AssetsWeightFull>::OracleMembership;
         }
 
     };

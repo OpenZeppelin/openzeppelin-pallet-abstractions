@@ -75,7 +75,7 @@ macro_rules! impl_openzeppelin_system {
             // The data to be stored in an account.
             type AccountData = pallet_balances::AccountData<Balance>;
             // The identifier used to distinguish between accounts.
-            type AccountId = <$t as SystemConfig>::AccountId;
+            type AccountId = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::AccountId;
             // The basic call filter to use in dispatchable.
             type BaseCallFilter = NormalFilter;
             // The block type.
@@ -87,14 +87,14 @@ macro_rules! impl_openzeppelin_system {
             // Block & extrinsics weights: base values and limits.
             type BlockWeights = RuntimeBlockWeights;
             // The weight of database operations that the runtime can invoke.
-            type DbWeight = <$t as SystemWeight>::DbWeight;
+            type DbWeight = <$t as openzeppelin_pallet_abstractions::SystemWeightFull>::DbWeight;
             // The type for hashing blocks and tries.
             type Hash = Hash;
             // The lookup mechanism to get account ID from whatever is passed in
             // dispatchers.
-            type Lookup = <$t as SystemConfig>::Lookup;
+            type Lookup = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::Lookup;
             // The maximum number of consumers allowed on a single account.
-            type MaxConsumers = <$t as SystemConfig>::MaxConsumers;
+            type MaxConsumers = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::MaxConsumers;
             // The index type for storing how many extrinsics an account has signed.
             type Nonce = Nonce;
             // The action to take on a Runtime Upgrade
@@ -108,9 +108,9 @@ macro_rules! impl_openzeppelin_system {
             // The ubiquitous origin type.
             type RuntimeOrigin = RuntimeOrigin;
             // This is used as an identifier of the chain. 42 is the generic substrate prefix.
-            type SS58Prefix = <$t as SystemConfig>::SS58Prefix;
+            type SS58Prefix = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::SS58Prefix;
             // Runtime version.
-            type Version = <$t as SystemConfig>::Version;
+            type Version = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::Version;
         }
 
         impl cumulus_pallet_weight_reclaim::Config for Runtime {
@@ -121,14 +121,14 @@ macro_rules! impl_openzeppelin_system {
         // A pallet that provides a way for consensus systems to set and check the onchain time.
         impl pallet_timestamp::Config for Runtime {
             // Timestamp must increment by at least <MinimumPeriod> between sequential blocks
-            type MinimumPeriod = <$t as SystemConfig>::SlotDuration;
+            type MinimumPeriod = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::SlotDuration;
             // A timestamp: milliseconds since the unix epoch.
             type Moment = u64;
             // The Config::OnTimestampSet configuration trait can be set to another pallet we want to notify that the
             // timestamp has been updated, as long as it implements OnTimestampSet.
-            type OnTimestampSet = <$t as SystemConfig>::OnTimestampSet;
+            type OnTimestampSet = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::OnTimestampSet;
             // Rerun benchmarks if you are making changes to runtime configuration.
-            type WeightInfo = <$t as SystemWeight>::Timestamp;
+            type WeightInfo = <$t as openzeppelin_pallet_abstractions::SystemWeightFull>::Timestamp;
         }
 
         impl parachain_info::Config for Runtime {}
@@ -157,8 +157,8 @@ macro_rules! impl_openzeppelin_system {
             // The aggregated origin which the dispatch will take.
             type RuntimeOrigin = RuntimeOrigin;
             // Required origin to schedule or cancel calls.
-            type ScheduleOrigin = <$t as SystemConfig>::ScheduleOrigin;
-            type WeightInfo = <$t as SystemWeight>::Scheduler;
+            type ScheduleOrigin = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::ScheduleOrigin;
+            type WeightInfo = <$t as openzeppelin_pallet_abstractions::SystemWeightFull>::Scheduler;
             type BlockNumberProvider = frame_system::Pallet<Runtime>;
         }
 
@@ -185,10 +185,10 @@ macro_rules! impl_openzeppelin_system {
             // Currency type for this pallet.
             type Currency = Balances;
             // An origin that can request a preimage be placed on-chain without a deposit or fee, or manage existing preimages.
-            type ManagerOrigin = <$t as SystemConfig>::PreimageOrigin;
+            type ManagerOrigin = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::PreimageOrigin;
             // The overarching event type.
             type RuntimeEvent = RuntimeEvent;
-            type WeightInfo = <$t as SystemWeight>::Preimage;
+            type WeightInfo = <$t as openzeppelin_pallet_abstractions::SystemWeightFull>::Preimage;
         }
 
         parameter_types! {
@@ -208,20 +208,20 @@ macro_rules! impl_openzeppelin_system {
             // The currency mechanism.
             type Currency = Balances;
             // The maximum amount of time-delayed announcements that are allowed to be pending.
-            type MaxPending = <$t as SystemConfig>::MaxPendingProxies;
+            type MaxPending = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::MaxPendingProxies;
             // The maximum amount of proxies allowed for a single account.
-            type MaxProxies = <$t as SystemConfig>::MaxProxies;
+            type MaxProxies = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::MaxProxies;
             // The base amount of currency needed to reserve for creating a proxy.
             type ProxyDepositBase = ProxyDepositBase;
             // The amount of currency needed per proxy added.
             type ProxyDepositFactor = ProxyDepositFactor;
             // A kind of proxy; specified with the proxy and passed in to the `IsProxyable` filter.
-            type ProxyType = <$t as SystemConfig>::ProxyType;
+            type ProxyType = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::ProxyType;
             // The overarching call type.
             type RuntimeCall = RuntimeCall;
             // The overarching event type.
             type RuntimeEvent = RuntimeEvent;
-            type WeightInfo = <$t as SystemWeight>::Proxy;
+            type WeightInfo = <$t as openzeppelin_pallet_abstractions::SystemWeightFull>::Proxy;
             type BlockNumberProvider = frame_system::Pallet<Runtime>;
         }
 
@@ -235,15 +235,15 @@ macro_rules! impl_openzeppelin_system {
             // Handler for the unbalanced reduction when removing a dust account.
             type DustRemoval = ();
             // The minimum amount required to keep an account open. MUST BE GREATER THAN ZERO!
-            type ExistentialDeposit = <$t as SystemConfig>::ExistentialDeposit;
+            type ExistentialDeposit = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::ExistentialDeposit;
             // The ID type for freezes.
             type FreezeIdentifier = ();
             // The maximum number of individual freeze locks that can exist on an account at any time.
-            type MaxFreezes = <$t as SystemConfig>::MaxFreezes;
+            type MaxFreezes = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::MaxFreezes;
             // The maximum number of locks that should exist on an account. Not strictly enforced but used for weight estimation.
-            type MaxLocks = <$t as SystemConfig>::MaxLocks;
+            type MaxLocks = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::MaxLocks;
             // The maximum number of named reserves that can exist on an account.
-            type MaxReserves = <$t as SystemConfig>::MaxReserves;
+            type MaxReserves = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::MaxReserves;
             // The ID type for reserves. Use of reserves is deprecated in favour of holds.
             type ReserveIdentifier = [u8; 8];
             // The ubiquitous event type.
@@ -252,7 +252,7 @@ macro_rules! impl_openzeppelin_system {
             type RuntimeFreezeReason = RuntimeFreezeReason;
             // The overarching hold reason.
             type RuntimeHoldReason = RuntimeHoldReason;
-            type WeightInfo = <$t as SystemWeight>::Balances;
+            type WeightInfo = <$t as openzeppelin_pallet_abstractions::SystemWeightFull>::Balances;
 	        type DoneSlashHandler = ();
         }
 
@@ -262,7 +262,7 @@ macro_rules! impl_openzeppelin_system {
             type PalletsOrigin = OriginCaller;
             type RuntimeCall = RuntimeCall;
             type RuntimeEvent = RuntimeEvent;
-            type WeightInfo = <$t as SystemWeight>::Utility;
+            type WeightInfo = <$t as openzeppelin_pallet_abstractions::SystemWeightFull>::Utility;
         }
 
         parameter_types! {
@@ -279,7 +279,7 @@ macro_rules! impl_openzeppelin_system {
             #[cfg(feature = "async-backing")]
             type CheckAssociatedRelayNumber = RelayNumberMonotonicallyIncreases;
             // An entry-point for managing the backlog of unincluded parachain blocks and authorship rights for those blocks.
-            type ConsensusHook = <$t as SystemConfig>::ConsensusHook;
+            type ConsensusHook = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::ConsensusHook;
             // Queues inbound downward messages for delayed processing.
             // All inbound DMP messages from the relay are pushed into this.
             // The handler is expected to eventually process all the messages that are pushed to it.
@@ -296,7 +296,7 @@ macro_rules! impl_openzeppelin_system {
             type RuntimeEvent = RuntimeEvent;
             // Returns the parachain ID we are running with.
             type SelfParaId = parachain_info::Pallet<Runtime>;
-            type WeightInfo = <$t as SystemWeight>::ParachainSystem;
+            type WeightInfo = <$t as openzeppelin_pallet_abstractions::SystemWeightFull>::ParachainSystem;
             // The message handler that will be invoked when messages are received via XCMP.
             type XcmpMessageHandler = XcmpQueue;
             type SelectCore = cumulus_pallet_parachain_system::DefaultCoreSelector<Runtime>;
@@ -319,12 +319,12 @@ macro_rules! impl_openzeppelin_system {
             // The amount of currency needed per unit threshold when creating a multisig execution.
             type DepositFactor = DepositFactor;
             // The maximum amount of signatories allowed in the multisig.
-            type MaxSignatories = <$t as SystemConfig>::MaxSignatories;
+            type MaxSignatories = <$t as openzeppelin_pallet_abstractions::SystemConfigFull>::MaxSignatories;
             // The overarching call type.
             type RuntimeCall = RuntimeCall;
             // The overarching event type.
             type RuntimeEvent = RuntimeEvent;
-            type WeightInfo = <$t as SystemWeight>::Multisig;
+            type WeightInfo = <$t as openzeppelin_pallet_abstractions::SystemWeightFull>::Multisig;
             type BlockNumberProvider = frame_system::Pallet<Runtime>;
         }
     };

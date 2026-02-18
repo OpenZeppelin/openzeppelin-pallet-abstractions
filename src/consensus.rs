@@ -38,9 +38,9 @@ macro_rules! impl_openzeppelin_consensus {
             // The identifier type for an authority.
             type AuthorityId = AuraId;
             // A way to check whether a given validator is disabled and should not be authoring blocks.
-            type DisabledValidators = <$t as ConsensusConfig>::DisabledValidators;
+            type DisabledValidators = <$t as openzeppelin_pallet_abstractions::ConsensusConfigFull>::DisabledValidators;
             // Max number of authorities allowed
-            type MaxAuthorities = <$t as ConsensusConfig>::MaxAuthorities;
+            type MaxAuthorities = <$t as openzeppelin_pallet_abstractions::ConsensusConfigFull>::MaxAuthorities;
             // A slot duration provider which infers the slot duration from the [pallet_timestamp::Config::MinimumPeriod] by multiplying
             // it by two, to ensure that authors have the majority of their slot to author within.
             type SlotDuration = pallet_aura::MinimumPeriodTimesTwo<Self>;
@@ -64,25 +64,25 @@ macro_rules! impl_openzeppelin_consensus {
             // should be a multiple of session or things will get inconsistent
             type KickThreshold = Period;
             // Maximum number of candidates that we should have without taking into account the invulnerables.
-            type MaxCandidates = <$t as ConsensusConfig>::MaxCandidates;
+            type MaxCandidates = <$t as openzeppelin_pallet_abstractions::ConsensusConfigFull>::MaxCandidates;
             // Maximum number of invulnerables (a set of collators appointed by governance. These accounts will always be collators.)
-            type MaxInvulnerables = <$t as ConsensusConfig>::MaxInvulnerables;
+            type MaxInvulnerables = <$t as openzeppelin_pallet_abstractions::ConsensusConfigFull>::MaxInvulnerables;
             // Minimum number eligible collators. Should always be greater than zero.
             // This ensures that there will always be one collator who can produce a block.
-            type MinEligibleCollators = <$t as ConsensusConfig>::MinEligibleCollators;
+            type MinEligibleCollators = <$t as openzeppelin_pallet_abstractions::ConsensusConfigFull>::MinEligibleCollators;
             // Account Identifier from which the internal Pot is generated.
             type PotId = PotId;
             // The overarching event type.
             type RuntimeEvent = RuntimeEvent;
             // Origin that can dictate updating parameters of this pallet.
-            type UpdateOrigin = <$t as ConsensusConfig>::CollatorSelectionUpdateOrigin;
+            type UpdateOrigin = <$t as openzeppelin_pallet_abstractions::ConsensusConfigFull>::CollatorSelectionUpdateOrigin;
             // A stable ID for a validator.
             type ValidatorId = <Self as frame_system::Config>::AccountId;
             // A conversion from account ID to validator ID.
             type ValidatorIdOf = pallet_collator_selection::IdentityCollator;
             // Validate a user is registered
             type ValidatorRegistration = Session;
-            type WeightInfo = <$t as ConsensusWeight>::CollatorSelection;
+            type WeightInfo = <$t as openzeppelin_pallet_abstractions::ConsensusWeightFull>::CollatorSelection;
         }
 
         parameter_types! {
@@ -118,7 +118,7 @@ macro_rules! impl_openzeppelin_consensus {
             // we don't have stash and controller, thus we don't need the convert as well.
             type ValidatorIdOf = pallet_collator_selection::IdentityCollator;
             type DisablingStrategy = ();
-            type WeightInfo = <$t as ConsensusWeight>::Session;
+            type WeightInfo = <$t as openzeppelin_pallet_abstractions::ConsensusWeightFull>::Session;
         }
     };
 }
