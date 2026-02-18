@@ -289,7 +289,7 @@ macro_rules! impl_openzeppelin_xcm {
             // The event type for this pallet.
             type RuntimeEvent = RuntimeEvent;
             // Weight information for extrinsics in the pallet.
-            type WeightInfo = <$t as XcmWeight>::XcmWeightTrader;
+            type WeightInfo = <$t as openzeppelin_pallet_abstractions::XcmWeightFull>::XcmWeightTrader;
             // The mechanism to convert weight into fees.
             type WeightToFee = <$t as openzeppelin_pallet_abstractions::XcmConfigFull>::WeightToFee;
             // Account that will receive XCM fees.
