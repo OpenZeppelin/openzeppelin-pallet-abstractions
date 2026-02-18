@@ -12,7 +12,7 @@ pub use crate::weights::*;
 use frame_support::traits::{ConstU32, Get, OnTimestampSet};
 use sp_version::RuntimeVersion;
 
-pub trait SystemConfig: SystemWeight {
+pub trait SystemConfig {
     type AccountId;
     type Lookup;
     type SS58Prefix;
@@ -26,7 +26,7 @@ pub trait SystemConfig: SystemWeight {
     type OnTimestampSet: OnTimestampSet<u64>;
 }
 
-impl<T: SystemConfig + SystemWeight> SystemConfigFull for T {
+impl<T: SystemConfig + SystemWeightFull> SystemConfigFull for T {
     type AccountId = T::AccountId;
     type Lookup = T::Lookup;
     type SS58Prefix = T::SS58Prefix;
@@ -68,11 +68,11 @@ pub trait SystemConfigFull: SystemWeightFull {
     type MaxReserves;
 }
 
-pub trait ConsensusConfig: ConsensusWeight {
+pub trait ConsensusConfig {
     type CollatorSelectionUpdateOrigin;
 }
 
-impl<T: ConsensusConfig + ConsensusWeight> ConsensusConfigFull for T {
+impl<T: ConsensusConfig + ConsensusWeightFull> ConsensusConfigFull for T {
     type DisabledValidators = ();
     type MaxAuthorities = ConstU32<100_000>;
     type MaxCandidates = ConstU32<100>;
@@ -90,7 +90,7 @@ pub trait ConsensusConfigFull: ConsensusWeightFull {
     type MinEligibleCollators;
 }
 
-pub trait AssetsConfig: AssetsWeight {
+pub trait AssetsConfig: AssetsWeightFull {
     type ApprovalDeposit;
     type AssetAccountDeposit;
     type AssetDeposit;
@@ -110,7 +110,7 @@ pub trait AssetsConfig: AssetsWeight {
     type AssetsToBlockAuthor;
 }
 
-pub trait GovernanceConfig: GovernanceWeight {
+pub trait GovernanceConfig: GovernanceWeightFull {
     type TreasuryInteriorLocation;
     type TreasuryPalletId;
     type TreasurySpendPeriod;
@@ -129,7 +129,7 @@ pub trait GovernanceConfig: GovernanceWeight {
     type ReferendaUndecidingTimeout;
 }
 
-impl<T: GovernanceConfig + GovernanceWeight> GovernanceConfigFull for T {
+impl<T: GovernanceConfig + GovernanceWeightFull> GovernanceConfigFull for T {
     type TreasuryBurn = ();
     type TreasurySpendFunds = ();
     type TreasuryBurnDestination = ();
@@ -179,7 +179,7 @@ pub trait GovernanceConfigFull: GovernanceWeightFull {
     type ReferendaUndecidingTimeout;
 }
 
-pub trait XcmConfig: XcmWeight {
+pub trait XcmConfig {
     type LocationToAccountId;
     type LocalOriginToLocation;
     type AssetTransactors;
@@ -223,7 +223,7 @@ pub trait XcmConfig: XcmWeight {
     type XcmFeesAccount;
 }
 
-impl<T: XcmConfig + XcmWeight> XcmConfigFull for T {
+impl<T: XcmConfig + XcmWeightFull> XcmConfigFull for T {
     type MaxActiveOutboundChannels = ConstU32<128>;
     type MaxPageSize = ConstU32<{ 1 << 16 }>;
     type LocationToAccountId = T::LocationToAccountId;
@@ -315,7 +315,7 @@ pub trait XcmConfigFull: XcmWeightFull {
     type XcmFeesAccount;
 }
 
-pub trait EvmConfig: EvmWeight {
+pub trait EvmConfig: EvmWeightFull {
     type AddressMapping;
     type FindAuthor;
     type CallOrigin;
