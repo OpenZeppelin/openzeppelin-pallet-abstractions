@@ -77,7 +77,7 @@ macro_rules! impl_openzeppelin_assets {
             // The overarching event type
             type RuntimeEvent = RuntimeEvent;
             type StringLimit = StringLimit;
-            type WeightInfo = <$t as AssetsWeight>::Assets;
+            type WeightInfo = <$t as openzeppelin_pallet_abstractions::AssetsWeightFull>::Assets;
             type Holder = ();
         }
 
@@ -101,7 +101,7 @@ macro_rules! impl_openzeppelin_assets {
             type OperationalFeeMultiplier = OperationalFeeMultiplier;
             type RuntimeEvent = RuntimeEvent;
             type WeightToFee = <$t as AssetsConfig>::WeightToFee;
-            type WeightInfo = <$t as AssetsWeight>::TransactionPayment;
+            type WeightInfo = <$t as openzeppelin_pallet_abstractions::AssetsWeightFull>::TransactionPayment;
         }
 
         impl pallet_asset_manager::Config for Runtime {
@@ -112,7 +112,7 @@ macro_rules! impl_openzeppelin_assets {
             type ForeignAssetModifierOrigin = <$t as AssetsConfig>::ForeignAssetModifierOrigin;
             type ForeignAssetType = <$t as AssetsConfig>::AssetType;
             type RuntimeEvent = RuntimeEvent;
-            type WeightInfo = <$t as AssetsWeight>::AssetManager;
+            type WeightInfo = <$t as openzeppelin_pallet_abstractions::AssetsWeightFull>::AssetManager;
         }
 
         pub struct AssetConverter;
@@ -315,7 +315,7 @@ macro_rules! impl_openzeppelin_assets {
             type Fungibles = crate::Assets;
             type OnChargeAssetTransaction = OnCharge;
             type RuntimeEvent = RuntimeEvent;
-            type WeightInfo = <$t as AssetsWeight>::AssetTxPayment;
+            type WeightInfo = <$t as openzeppelin_pallet_abstractions::AssetsWeightFull>::AssetTxPayment;
             #[cfg(feature = "runtime-benchmarks")]
             type BenchmarkHelper = AssetTxPaymentBenchmarkHelper;
         }
@@ -350,7 +350,7 @@ macro_rules! impl_openzeppelin_assets {
             type RootOperatorAccountId = <$t as AssetsConfig>::RootOperatorAccountId;
             type Members = OracleMembership;
             type MaxHasDispatchedSize = ConstU32<20>;
-            type WeightInfo = <$t as AssetsWeight>::OrmlOracle;
+            type WeightInfo = <$t as openzeppelin_pallet_abstractions::AssetsWeightFull>::OrmlOracle;
             type MaxFeedValues = MaxFeedValues;
             #[cfg(feature = "runtime-benchmarks")]
             type BenchmarkHelper = OracleBenchmarkHelper;
@@ -370,7 +370,7 @@ macro_rules! impl_openzeppelin_assets {
             type MembershipInitialized = ();
             type MembershipChanged = Oracle;
             type MaxMembers = MaxMembers;
-            type WeightInfo = <$t as AssetsWeight>::OracleMembership;
+            type WeightInfo = <$t as openzeppelin_pallet_abstractions::AssetsWeightFull>::OracleMembership;
         }
 
     };

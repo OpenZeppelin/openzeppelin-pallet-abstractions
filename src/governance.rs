@@ -25,7 +25,7 @@ macro_rules! impl_openzeppelin_governance {
             type RuntimeCall = RuntimeCall;
             // The overarching event type.
             type RuntimeEvent = RuntimeEvent;
-            type WeightInfo = <$t as GovernanceWeight>::Sudo;
+            type WeightInfo = <$t as openzeppelin_pallet_abstractions::GovernanceWeightFull>::Sudo;
         }
 
         #[cfg(feature = "runtime-benchmarks")]
@@ -51,32 +51,32 @@ macro_rules! impl_openzeppelin_governance {
             // Converting trait to take a source type and convert to [`Self::Beneficiary`].
             type BeneficiaryLookup = IdentityLookup<Self::Beneficiary>;
             // Percentage of spare funds (if any) that are burnt per spend period.
-            type Burn = <$t as GovernanceConfig>::TreasuryBurn;
+            type Burn = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::TreasuryBurn;
             // Handler for the unbalanced decrease when treasury funds are burned.
-            type BurnDestination = <$t as GovernanceConfig>::TreasuryBurnDestination;
+            type BurnDestination = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::TreasuryBurnDestination;
             // The staking balance.
             type Currency = Balances;
             // The maximum number of approvals that can wait in the spending queue.
-            type MaxApprovals = <$t as GovernanceConfig>::TreasuryMaxApprovals;
+            type MaxApprovals = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::TreasuryMaxApprovals;
             // The treasury's pallet id, used for deriving its sovereign account ID.
-            type PalletId = <$t as GovernanceConfig>::TreasuryPalletId;
+            type PalletId = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::TreasuryPalletId;
             #[cfg(feature = "runtime-benchmarks")]
             // Type for processing spends of [Self::AssetKind] in favor of [`Self::Beneficiary`].
             type Paymaster = PayWithEnsure<TreasuryPaymaster, OpenHrmpChannel<BenchmarkParaId>>;
             #[cfg(not(feature = "runtime-benchmarks"))]
             type Paymaster = TreasuryPaymaster;
             // The period during which an approved treasury spend has to be claimed.
-            type PayoutPeriod = <$t as GovernanceConfig>::TreasuryPayoutSpendPeriod;
+            type PayoutPeriod = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::TreasuryPayoutSpendPeriod;
             // Origin from which rejections must come.
-            type RejectOrigin = <$t as GovernanceConfig>::TreasuryRejectOrigin;
+            type RejectOrigin = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::TreasuryRejectOrigin;
             type RuntimeEvent = RuntimeEvent;
             // Runtime hooks to external pallet using treasury to compute spend funds.
-            type SpendFunds = <$t as GovernanceConfig>::TreasurySpendFunds;
+            type SpendFunds = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::TreasurySpendFunds;
             // The origin required for approving spends from the treasury outside of the proposal process.
-            type SpendOrigin = <$t as GovernanceConfig>::TreasurySpendOrigin;
+            type SpendOrigin = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::TreasurySpendOrigin;
             // Period between successive spends.
-            type SpendPeriod = <$t as GovernanceConfig>::TreasurySpendPeriod;
-            type WeightInfo = <$t as GovernanceWeight>::Treasury;
+            type SpendPeriod = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::TreasurySpendPeriod;
+            type WeightInfo = <$t as openzeppelin_pallet_abstractions::GovernanceWeightFull>::Treasury;
             type BlockNumberProvider = System;
         }
 
@@ -90,14 +90,14 @@ macro_rules! impl_openzeppelin_governance {
                 Self::AccountId,
             >;
             // The maximum number of concurrent votes an account may have.
-            type MaxVotes = <$t as GovernanceConfig>::ConvictionMaxVotes;
+            type MaxVotes = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::ConvictionMaxVotes;
             // The implementation of the logic which conducts polls.
             type Polls = Referenda;
             // The overarching event type.
             type RuntimeEvent = RuntimeEvent;
             // The minimum period of vote locking.
-            type VoteLockingPeriod = <$t as GovernanceConfig>::ConvictionVoteLockingPeriod;
-            type WeightInfo = <$t as GovernanceWeight>::ConvictionVoting;
+            type VoteLockingPeriod = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::ConvictionVoteLockingPeriod;
+            type WeightInfo = <$t as openzeppelin_pallet_abstractions::GovernanceWeightFull>::ConvictionVoting;
             type BlockNumberProvider = System;
             type VotingHooks = ();
         }
@@ -106,16 +106,16 @@ macro_rules! impl_openzeppelin_governance {
         // allow another configurable origin: Config::DispatchWhitelistedOrigin to dispatch them with the root origin.
         impl pallet_whitelist::Config for Runtime {
             // Required origin for dispatching whitelisted call with root origin.
-            type DispatchWhitelistedOrigin = <$t as GovernanceConfig>::DispatchWhitelistedOrigin;
+            type DispatchWhitelistedOrigin = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::DispatchWhitelistedOrigin;
             // The handler of pre-images.
             type Preimages = Preimage;
             // The overarching call type.
             type RuntimeCall = RuntimeCall;
             // The overarching event type.
             type RuntimeEvent = RuntimeEvent;
-            type WeightInfo = <$t as GovernanceWeight>::Whitelist;
+            type WeightInfo = <$t as openzeppelin_pallet_abstractions::GovernanceWeightFull>::Whitelist;
             // Required origin for whitelisting a call.
-            type WhitelistOrigin = <$t as GovernanceConfig>::WhitelistOrigin;
+            type WhitelistOrigin = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::WhitelistOrigin;
         }
 
         impl pallet_custom_origins::Config for Runtime {}
@@ -128,15 +128,15 @@ macro_rules! impl_openzeppelin_governance {
         // A pallet for executing referenda. A referendum is a vote on whether a proposal should be dispatched from a particular origin.
         impl pallet_referenda::Config for Runtime {
             // Quantization level for the referendum wakeup scheduler.
-            type AlarmInterval = <$t as GovernanceConfig>::ReferendaAlarmInterval;
+            type AlarmInterval = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::ReferendaAlarmInterval;
             // Origin from which any vote may be cancelled.
-            type CancelOrigin = <$t as GovernanceConfig>::ReferendaCancelOrigin;
+            type CancelOrigin = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::ReferendaCancelOrigin;
             // Currency type for this pallet.
             type Currency = Balances;
             // Origin from which any vote may be killed.
-            type KillOrigin = <$t as GovernanceConfig>::ReferendaKillOrigin;
+            type KillOrigin = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::ReferendaKillOrigin;
             // Maximum size of the referendum queue for a single track.
-            type MaxQueued = <$t as GovernanceConfig>::ReferendaMaxQueued;
+            type MaxQueued = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::ReferendaMaxQueued;
             // The preimage provider.
             type Preimages = Preimage;
             type RuntimeCall = RuntimeCall;
@@ -144,21 +144,21 @@ macro_rules! impl_openzeppelin_governance {
             // The Scheduler.
             type Scheduler = Scheduler;
             // Handler for the unbalanced reduction when slashing a preimage deposit.
-            type Slash = <$t as GovernanceConfig>::ReferendaSlash;
+            type Slash = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::ReferendaSlash;
             // The minimum amount to be used as a deposit for a public referendum proposal.
-            type SubmissionDeposit = <$t as GovernanceConfig>::ReferendaSubmissionDeposit;
+            type SubmissionDeposit = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::ReferendaSubmissionDeposit;
             // Origin from which proposals may be submitted.
-            type SubmitOrigin = <$t as GovernanceConfig>::ReferendaSubmitOrigin;
+            type SubmitOrigin = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::ReferendaSubmitOrigin;
             // The tallying type.
             type Tally = pallet_conviction_voting::TallyOf<Runtime>;
             // Information concerning the different referendum tracks.
             type Tracks = tracks::TracksInfo;
             // The number of blocks after submission that a referendum must begin being decided by.
             // Once this passes, then anyone may cancel the referendum.
-            type UndecidingTimeout = <$t as GovernanceConfig>::ReferendaUndecidingTimeout;
+            type UndecidingTimeout = <$t as openzeppelin_pallet_abstractions::GovernanceConfigFull>::ReferendaUndecidingTimeout;
             // The counting type for votes. Usually just balance.
             type Votes = pallet_conviction_voting::VotesOf<Runtime>;
-            type WeightInfo = <$t as GovernanceWeight>::Referenda;
+            type WeightInfo = <$t as openzeppelin_pallet_abstractions::GovernanceWeightFull>::Referenda;
             type BlockNumberProvider = frame_system::Pallet<Runtime>;
         }
     };
