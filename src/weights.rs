@@ -28,8 +28,7 @@ impl<T: SystemWeight> SystemWeightFull for T {
     type DbWeight = T::DbWeight;
 }
 
-pub trait ConsensusWeight {
-}
+pub trait ConsensusWeight {}
 
 impl<T: ConsensusWeight> ConsensusWeightFull for T {
     type CollatorSelection = ();
@@ -41,8 +40,7 @@ pub trait ConsensusWeightFull: ConsensusWeight {
     type Session;
 }
 
-pub trait AssetsWeight {
-}
+pub trait AssetsWeight {}
 
 impl<T: AssetsWeight> AssetsWeightFull for T {
     type Assets = ();
@@ -62,8 +60,7 @@ pub trait AssetsWeightFull: AssetsWeight {
     type AssetTxPayment;
 }
 
-pub trait GovernanceWeight {
-}
+pub trait GovernanceWeight {}
 
 impl<T: GovernanceWeight> GovernanceWeightFull for T {
     type Sudo = ();
@@ -81,8 +78,7 @@ pub trait GovernanceWeightFull: GovernanceWeight {
     type Referenda;
 }
 
-pub trait XcmWeight {
-}
+pub trait XcmWeight {}
 
 impl<T: XcmWeight> XcmWeightFull for T {
     type MessageQueue = ();
@@ -100,8 +96,7 @@ pub trait XcmWeightFull: XcmWeight {
     type XcmTransactor;
 }
 
-pub trait EvmWeight {
-}
+pub trait EvmWeight {}
 
 impl<T: EvmWeight> EvmWeightFull for T {
     type Evm = ();
@@ -111,10 +106,12 @@ pub trait EvmWeightFull: EvmWeight {
     type Evm;
 }
 
-pub trait TanssiWeight {
-}
+pub trait TanssiWeight {}
 
 impl<T: TanssiWeight> TanssiWeightFull for T {
+    type AuthorInherent = ();
+    type AuthoritiesNoting = ();
+}
 
 pub trait TanssiWeightFull: TanssiWeight {
     type AuthorInherent;
