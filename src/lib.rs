@@ -26,7 +26,7 @@ pub trait SystemConfig: SystemWeight {
     type OnTimestampSet: OnTimestampSet<u64>;
 }
 
-impl<T: SystemConfig> SystemConfigFull for T {
+impl<T: SystemConfig + SystemWeight> SystemConfigFull for T {
     type AccountId = T::AccountId;
     type Lookup = T::Lookup;
     type SS58Prefix = T::SS58Prefix;
@@ -72,7 +72,7 @@ pub trait ConsensusConfig: ConsensusWeight {
     type CollatorSelectionUpdateOrigin;
 }
 
-impl<T: ConsensusConfig> ConsensusConfigFull for T {
+impl<T: ConsensusConfig + ConsensusWeight> ConsensusConfigFull for T {
     type DisabledValidators = ();
     type MaxAuthorities = ConstU32<100_000>;
     type MaxCandidates = ConstU32<100>;
@@ -129,7 +129,7 @@ pub trait GovernanceConfig: GovernanceWeight {
     type ReferendaUndecidingTimeout;
 }
 
-impl<T: GovernanceConfig> GovernanceConfigFull for T {
+impl<T: GovernanceConfig + GovernanceWeight> GovernanceConfigFull for T {
     type TreasuryBurn = ();
     type TreasurySpendFunds = ();
     type TreasuryBurnDestination = ();
@@ -223,7 +223,7 @@ pub trait XcmConfig: XcmWeight {
     type XcmFeesAccount;
 }
 
-impl<T: XcmConfig> XcmConfigFull for T {
+impl<T: XcmConfig + XcmWeight> XcmConfigFull for T {
     type MaxActiveOutboundChannels = ConstU32<128>;
     type MaxPageSize = ConstU32<{ 1 << 16 }>;
     type LocationToAccountId = T::LocationToAccountId;

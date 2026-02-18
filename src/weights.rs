@@ -115,9 +115,6 @@ pub trait TanssiWeight {
 }
 
 impl<T: TanssiWeight> TanssiWeightFull for T {
-    type AuthorInherent = ();
-    type AuthoritiesNoting = ();
-}
 
 pub trait TanssiWeightFull: TanssiWeight {
     type AuthorInherent;
