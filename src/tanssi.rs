@@ -6,7 +6,8 @@ macro_rules! impl_openzeppelin_tanssi {
             type AccountLookup = dp_consensus::NimbusLookUp;
             type CanAuthor = pallet_cc_authorities_noting::CanAuthor<Runtime>;
             type SlotBeacon = dp_consensus::AuraDigestSlotBeacon<Runtime>;
-            type WeightInfo = <$t as openzeppelin_pallet_abstractions::TanssiWeightFull>::AuthorInherent;
+            type WeightInfo =
+                <$t as openzeppelin_pallet_abstractions::TanssiWeightFull>::AuthorInherent;
         }
 
         impl pallet_cc_authorities_noting::Config for Runtime {
@@ -15,7 +16,8 @@ macro_rules! impl_openzeppelin_tanssi {
             type RelayChainStateProvider =
                 cumulus_pallet_parachain_system::RelaychainDataProvider<Self>;
             type AuthorityId = nimbus_primitives::NimbusId;
-            type WeightInfo = <$t as openzeppelin_pallet_abstractions::TanssiWeightFull>::AuthoritiesNoting;
+            type WeightInfo =
+                <$t as openzeppelin_pallet_abstractions::TanssiWeightFull>::AuthoritiesNoting;
         }
     };
 }
