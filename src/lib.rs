@@ -47,7 +47,7 @@ impl<T: SystemConfig + SystemWeight> SystemConfigFull for T {
     type MaxReserves = ConstU32<50>;
 }
 
-pub trait SystemConfigFull: SystemConfig {
+pub trait SystemConfigFull: SystemWeightFull {
     type AccountId;
     type Lookup;
     type SS58Prefix;
@@ -81,7 +81,7 @@ impl<T: ConsensusConfig + ConsensusWeight> ConsensusConfigFull for T {
     type CollatorSelectionUpdateOrigin = T::CollatorSelectionUpdateOrigin;
 }
 
-pub trait ConsensusConfigFull: ConsensusConfig {
+pub trait ConsensusConfigFull: ConsensusWeightFull {
     type CollatorSelectionUpdateOrigin;
     type DisabledValidators;
     type MaxAuthorities;
@@ -154,7 +154,7 @@ impl<T: GovernanceConfig + GovernanceWeight> GovernanceConfigFull for T {
     type ReferendaAlarmInterval = T::ReferendaAlarmInterval;
 }
 
-pub trait GovernanceConfigFull: GovernanceConfig {
+pub trait GovernanceConfigFull: GovernanceWeightFull {
     type TreasuryBurn;
     type TreasurySpendFunds;
     type TreasuryBurnDestination;
@@ -269,7 +269,7 @@ impl<T: XcmConfig + XcmWeight> XcmConfigFull for T {
     type XcmFeesAccount = T::XcmFeesAccount;
 }
 
-pub trait XcmConfigFull: XcmWeight {
+pub trait XcmConfigFull: XcmWeightFull {
     type LocationToAccountId;
     type LocalOriginToLocation;
     type AssetTransactors;
@@ -326,7 +326,7 @@ pub trait EvmConfig: EvmWeight {
     type LocationToH160;
 }
 
-pub trait TanssiConfig: TanssiWeight {
+pub trait TanssiConfig: TanssiWeightFull {
     type AuthorInherent;
     type AuthoritiesNothing;
 }
