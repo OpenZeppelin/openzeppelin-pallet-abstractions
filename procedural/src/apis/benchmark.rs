@@ -247,7 +247,7 @@ pub fn construct_benchmarking_api(
 
             fn dispatch_benchmark(
                 config: frame_benchmarking::BenchmarkConfig
-            ) -> Result<sp_std::prelude::Vec<frame_benchmarking::BenchmarkBatch>, sp_runtime::RuntimeString> {
+            ) -> Result<sp_std::prelude::Vec<frame_benchmarking::BenchmarkBatch>, alloc::string::String> {
                 use frame_benchmarking::{BenchmarkError, Benchmarking, BenchmarkBatch};
                 use frame_system_benchmarking::Pallet as SystemBench;
                 use pallet_xcm::benchmarking::Pallet as PalletXcmExtrinsicsBenchmark;
@@ -255,10 +255,11 @@ pub fn construct_benchmarking_api(
                 use crate::{*, types::*, configs::*};
 
                 #[cfg(feature = "runtime-benchmarks")]
+                #[allow(non_local_definitions)]
                 impl frame_system_benchmarking::Config for #runtime {
                     fn setup_set_code_requirements(
                         code: &sp_std::vec::Vec<u8>,
-                    ) -> Result<(), BenchmarkError> {
+                    ) -> Result<(), frame_benchmarking::BenchmarkError> {
                         #parachain_system::initialize_for_set_code_benchmark(code.len() as u32);
                         Ok(())
                     }
@@ -297,6 +298,7 @@ fn construct_consensus_metadata_benchmarking() -> proc_macro2::TokenStream {
 fn construct_consensus_dispatch_benchmarking(runtime: &Ident) -> proc_macro2::TokenStream {
     quote! {
         use cumulus_pallet_session_benchmarking::Pallet as SessionBench;
+        #[allow(non_local_definitions)]
         impl cumulus_pallet_session_benchmarking::Config for #runtime {}
     }
 }
@@ -349,6 +351,7 @@ fn construct_xcm_dispatch_benchmarking(
             #parachain_system,
         >;
 
+        #[allow(non_local_definitions)]
         impl pallet_xcm::benchmarking::Config for #runtime {
             type DeliveryHelper = cumulus_primitives_utility::ToParentDeliveryHelper<
                 #xcm_config,
