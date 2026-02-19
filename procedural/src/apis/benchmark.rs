@@ -225,6 +225,22 @@ pub fn construct_benchmarking_api(
 
     quote! {
         #[cfg(feature = "runtime-benchmarks")]
+        impl frame_system_benchmarking::Config for #runtime {
+            fn setup_set_code_requirements(
+                code: &sp_std::vec::Vec<u8>,
+            ) -> Result<(), frame_benchmarking::BenchmarkError> {
+                #parachain_system::initialize_for_set_code_benchmark(code.len() as u32);
+                Ok(())
+            }
+
+            fn verify_set_code() {
+                #system::assert_last_event(
+                    cumulus_pallet_parachain_system::Event::<#runtime>::ValidationFunctionStored
+                        .into(),
+                );
+            }
+        }
+        #[cfg(feature = "runtime-benchmarks")]
         impl frame_benchmarking::Benchmark<Block> for #runtime {
             fn benchmark_metadata(extra: bool) -> (
                 sp_std::prelude::Vec<frame_benchmarking::BenchmarkList>,
@@ -247,29 +263,12 @@ pub fn construct_benchmarking_api(
 
             fn dispatch_benchmark(
                 config: frame_benchmarking::BenchmarkConfig
-            ) -> Result<sp_std::prelude::Vec<frame_benchmarking::BenchmarkBatch>, sp_runtime::RuntimeString> {
+            ) -> Result<sp_std::prelude::Vec<frame_benchmarking::BenchmarkBatch>, sp_std::borrow::Cow<'static, str>> {
                 use frame_benchmarking::{BenchmarkError, Benchmarking, BenchmarkBatch};
                 use frame_system_benchmarking::Pallet as SystemBench;
                 use pallet_xcm::benchmarking::Pallet as PalletXcmExtrinsicsBenchmark;
 
                 use crate::{*, types::*, configs::*};
-
-                #[cfg(feature = "runtime-benchmarks")]
-                impl frame_system_benchmarking::Config for #runtime {
-                    fn setup_set_code_requirements(
-                        code: &sp_std::vec::Vec<u8>,
-                    ) -> Result<(), BenchmarkError> {
-                        #parachain_system::initialize_for_set_code_benchmark(code.len() as u32);
-                        Ok(())
-                    }
-
-                    fn verify_set_code() {
-                        #system::assert_last_event(
-                            cumulus_pallet_parachain_system::Event::<#runtime>::ValidationFunctionStored
-                                .into(),
-                        );
-                    }
-                }
 
                 #xcm_dispatch
                 #consensus_dispatch
