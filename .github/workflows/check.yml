@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     name: fmt
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           submodules: true
       - name: Install Rust
@@ -41,7 +41,7 @@ jobs:
     strategy:
       fail-fast: false
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           submodules: true
       - name: Install Rust
@@ -59,7 +59,7 @@ jobs:
     runs-on: ubuntu-latest
     name: doc
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           submodules: true
       - name: Install nightly
@@ -74,7 +74,7 @@ jobs:
     name: typos
     steps:
       - name: Checkout Actions Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Check spelling of files in the workspace
         uses: crate-ci/typos@v1.26.0
 
